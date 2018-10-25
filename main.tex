@@ -1,0 +1,156 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\input{imports/font}
+\input{imports/text}
+
+\input{imports/math}
+\input{imports/tables}
+\input{imports/figures}
+\input{imports/diagrams}
+\input{imports/misc}
+
+
+
+\title{Machine learning notes}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Probability}
+
+\textbf{Conditional expectation}:
+\begin{align}
+    \E(\rvar x\mid\rvar y) = \del{y\mapsto \E(\rvar x\mid y)}(\rvar{y}) \text.
+\end{align}
+The conditional expectation $\E(\rvar x\mid\rvar y)$ is a function of the random variable $\rvar y$ and, thus, is a random variable as well. 
+
+
+
+\section{Information theory}
+
+
+\subsection{Information-theoretic measures}
+
+functionals
+
+\subsubsection{Basic concepts}
+
+\textbf{Information content} of an event -- optimal message length for the event $\event{\rvar x=x}$:
+\begin{align}
+\I(\rvar x=x) = -\ln\P(x) \text.
+\end{align}
+
+\textbf{Entropy} (Shannon entropy) of a random variable (or a distribution) -- expected message length for optimally encoded elementary events of $\rvar x$:
+\begin{align}
+    \H(\rvar x) &= \E_{\rvar x}\I(\rvar x=x) = -\E\ln\P(\rvar x) \text.
+\end{align}
+The same formula applies for joint distributions, e.g. for the distribution $\P(\rvar x,\rvar y)$, we denote entropy (also called \textbf{joint entropy}) by $\H(\rvar x,\rvar y)$.
+
+\textbf{Cross entropy} -- expected message length if the optimal code for $\P(\rvar y)$ is used, but $\P(\rvar x)$ is sampled.
+\begin{align}
+    \H_\rvar{y}(\rvar x) = \E_{\rvar x}\I(\rvar y=x) = -\E_{\rvar x}\ln\P(\rvar y=x) \text.
+\end{align}
+
+\textbf{Relative entropy} (Kullback–Leibler (KL) divergence) -- difference of cross entropy and entropy, measures how much $P(\rvar y)$ differs from $\P(\rvar x)$:
+\begin{align}
+    \Dist_\rvar{y}(\rvar x) = \H_\rvar{y}(\rvar x) - \H(\rvar x) = \E_\rvar{x}\del{\I(\rvar y=x)-\I(\rvar x=x)} = \E_\rvar{x}\ln\frac{\P(x)}{\P(\rvar y=x)} \text.
+\end{align}
+
+\textbf{Mutual information}.
+\begin{align}
+    \I(\rvar x; \rvar y) = \H(\rvar x) +\H(\rvar y) - \H(\rvar x, \rvar y) \text.
+\end{align}
+If there is a common condition, we can use $\I\del{\rvar x; \rvar y\mid z}$ as a shorter notation for $\I\del{(\rvar x\mid z); (\rvar y\mid z)}$. If we want to express mutual information between e.g. $\rvar x$ and $\rvar y\mid z$, to avoid ambiguity, we do it like this: $\I(\rvar x;(\rvar y\mid z))$.
+
+\subsubsection{Conditional counterparts}
+
+Conditional counterparts of the information-theoretic measures have random variables in the condition-part of the expression that represents the argument of a measure. E.g. \textbf{Conditional entropy} is defined like this:
+\begin{align}
+    \H(\rvar x\mid\rvar y) &= \E_{\rvar y}\H(\rvar x\mid y) \text.
+\end{align}
+Similarly, conditional cross-entropy can be defined like this:
+\begin{align}
+    \H_\rvar{y}(\rvar x\mid\rvar z) &= \E_\rvar{z}\H_\rvar{y}(\rvar x\mid z) \text,
+\end{align}
+conditional mutual information like this:
+\begin{align}
+    \I(\rvar x; \rvar y\mid \rvar z) = \E_\rvar{z}\I\del{\rvar x; \rvar y \mid z)} \text.
+\end{align}
+
+\subsubsection{Differential counterparts}
+
+\subsubsection{Information theory and measure theory}
+
+\url{https://en.wikipedia.org/wiki/Information_theory_and_measure_theory}
+
+
+\subsection{Kolmogorov complexity}
+
+
+\subsection{Minimum description length}
+
+
+
+\section{Uncertainty in machine learning}
+
+
+\subsection{Expressing uncertainty}
+
+The basic and most complete way to express uncertainty are probability distributions. From a probability distribution, other uncertainty measures can be derived. Some common ones are the distribution of a derived random variable (a random variable which is a function of the original one), a parameter or a property of the distribution (e.g. the probability of the most certain value of the random variable or the entropy of the distribution).
+
+$\rvec{x}_i, p(\rvec{x}_i=\vec x\mid \rvec{y}=2, \rvar y=8, \rvar{z}=7, \rvec{z}=\vec 0, \rvar j=7, \rvec i=0, \rvec l=44), \rset{D}, \set{D}$
+
+\begin{equation}\label{eq:conv_relu}
+x^l_{i, j} = \sum_{a=0}^{k-1} \sum_{b=0}^{k-1} w_{a,b} \max(x^{l-1}_{i+a, j+b}, \theta_{a,b})
+\end{equation}
+
+
+
+\subsection{Epistemička i aleatorna nesigurnost}
+
+%\paragraph{Što je epistemička nesigurnost?} 
+\emph{Epistemička nesigurnost} (nesigurnost modela) je nesigurnost u model ili parametre. Ona se može smanjiti uz više podataka/informacija. \emph{Epistemička nesigurnost predikcije} dolazi od nesigurnosti u model/parametre.
+
+%\paragraph{Kad možemo izraziti epistemičku nesigurnost?}
+Kad parametre modela procjenjujemo točkasto, nemamo aposteriornu razdiobu parametara i ne znamo kakva je epistemička nesigurnost (ne možemo ju izraziti), ali ju možemo smanjiti uz više podataka. Kod bayesovske procjene parametara ili kod ansabla možemo procijeniti epistemičku nesigurnost.
+
+%\paragraph{Što je aleatorna nesigurnost?}
+\emph{Aleatorna nesigurnost} (predikcije) je nesigurnost koja dolazi od višeznačnosti podataka i ograničenja modela. Aleatorna nesigurnost se ne može smanjiti uz više podataka, ali bi se mogla smanjiti uz bolje podatke, tj. podatke koji imaju značajke koje sadrže više korisnih informacija, ili model koji pronalazi bolje značajke.
+
+Kod diskriminativnog modela izlazna razdioba $p(y\mid x, \theta_\text{MAP})$ izražava aleatornu nesigurnost.
+
+%\paragraph{Je li ukupna nesigurnost zbroj epistemičke i aleatorne?}
+
+Mislim da procjena ukupne nesigurnosti ovisi o tome koliko je dobro procijenjena epistemička nesigurnost. Što je lošija procjena aposteriorne razdiobe parametara, to je procjena epistemičke nesigurnosti lošija.
+
+
+\subsection{Nesigurnost i izvanrazdiobni primjeri}
+
+Neka je $D_{\text{train}}$ razdioba iz koje su došli primjeri za učenje. Diskrimanativni model uči funkciju $p(y\mid x)$. Ako je gustoća vjerojatnosti $D_{\text{train}}(x)$ jako mala (ili $0$), moguće je da nije bilo sličnih primjera u skupu za učenje i model može dati bilo kakvu predikciju za taj primjer. Takve primjeri su \emph{izvanrazdiobni primjeri}.
+
+Ipak, pokazano je se da se (kod nekih modela) izvanrazdiobni primjeri često mogu dosta dobro prepoznavati na temelju izlazne razdiobe modela s točkasto procijenjenim parametrima. 
+
+
+\subsection{Uspješnost procjene epistemičke nesigurnosti kod aproksimacija bayesovskog zaključivanja o parametrima}
+
+
+\subsection{Nesigurnost i  generalizacija}
+
+
+\section{Generative adversarial networks}
+
+\subsection{Getting the example probability $\p(\vec x)$ from the generator}
+
+first paragraph
+
+case 1) normal generator
+
+case 2) invertible generator
+
+
+
+
+\end{document}

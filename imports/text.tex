@@ -1,0 +1,53 @@
+\usepackage[T1]{fontenc}  % accented characters, copy from pdf, ...
+
+\raggedright						% bez desnog poravnavanja
+\raggedbottom
+\usepackage{caption}
+\captionsetup{%
+	justification=raggedright,
+}
+\usepackage{etoolbox}
+\makeatletter
+	\patchcmd{\@dottedtocline}
+	{\rightskip\@tocrmarg}
+	{\rightskip\@tocrmarg plus 4em \hyphenpenalty\@M}
+	{}{}
+\makeatother
+\setlength{\parindent}{1em}	 % uvlačenje ulomaka
+\usepackage{indentfirst}	 % uvlačenje prvog ulomka
+\setlength{\parskip}{0.5em}	 % razmak između ulomaka
+
+\usepackage{listings}  % listings
+\renewcommand{\lstlistingname}{Ispis}
+
+\usepackage[multiple, bottom]{footmisc}	 % višestruke fusnote, poslije slika/tablica
+
+\usepackage[hidelinks]{hyperref}
+\renewcommand*{\UrlFont}{\footnotesize}
+
+% colors
+
+\usepackage{xcolor}
+\usepackage{color}
+
+\hypersetup{
+	colorlinks,
+	linkcolor={blue!60!green!50!black},  % xcolor package
+	citecolor={green!40!black},
+	urlcolor={blue!75!green!30!black}
+}
+\definecolor{bluekeywords}{rgb}{0.13,0.13,1}  % color package
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.9,0,0}
+
+%\newtheorem{theorem}{Teorem}[section]
+%\newtheorem{definition}{Definicija}[section]
+
+\usepackage{enumitem}  % \begin{enumerate}[topsep=0pt,itemsep=0pt,partopsep=0pt]
+ 
+\DeclareTextFontCommand{\emphasize}{\bfseries}
+
+\newenvironment{solidenumerate}
+	{\begin{enumerate}[topsep=0pt,itemsep=0pt,partopsep=0pt]}
+	{\end{enumerate}}
+
