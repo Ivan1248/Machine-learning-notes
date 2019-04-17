@@ -29,77 +29,77 @@
 %\setglossarypreamble[symbols]{Ovaj odjeljak sadrži popis velikog broja oznaka koje se koriste u ovom radu. Za neke skupine oznaka napisana su kratka objašnjenja koja dodatno pojašnjavaju i opravdavaju neke oznake. Pojmovi koje označavaju neke oznake detaljnije su objašnjeni u poglavlju~\ref{chap:osnovni-pojmovi}.}
 
 % Objekti
-\glsgroup{o}{Objekti}
-{Varijable se označavaju kosim slovima sa serifima, većina konstanti uspravnim slovima sa serifima, a slučajne varijable kosim slovima bez serifa. Vektori se označavaju malim podebljanim slovima, matrice i višedimenzionalni nizovi (tenzori) velikim podebljanim slovima, a skupovi slovima s udvostručenim linijama. Za svaku vrstu objekta mogu se koristiti i latinska i grčka slova.}
+\glsgroup{o}{Objects}
+{Variables are generally denoted by italic serif letters. Most constants are denoted by upright serif letters. Random variables are underlined. Vectors and sequences are denoted by lowercase bold letters. Matrices and multidimensional-arrays are denoted by uppercase bold letter. Sets are denoted by uppercase blackboard-bold letters. Latin or Greek letters can be used for any type of object.}
 \glsentm{o}{var}{a,\,A,\,\theta}
-	{Varijabla (najčešće skalar)}
+	{Variable (commonly scalar or function)}
 \glsentm{o}{vec}{\vec a,\,\vec\theta}
-	{Vektor ili niz (najčešće vektor stupac)}
+	{Vector or sequence (commonly column vector)}
 \glsentm{o}{mat}{\vec A,\,\vec\Theta}
-	{Matrica ili višedimenzionalni niz}
+	{Matrix or multidimensional array}
 \glsentm{o}{set}{\set A}
-	{Skup ili multiskup}
+	{Set or multiset}
 \glsentm{o}{const}{\const a,\,\const A,\,\uptheta}
-	{Konstanta}
+	{Constant}
 \glsentm{o}{cvec}{\cvec a,\,\boldsymbol{\uptheta}}
-	{Konstanta vektor ili niz}
+	{Vector or sequence constant}
 \glsentm{o}{cmat}{\cvec A,\,\cvec\Theta}
-	{Konstanta matrica ili višedimenzionalni niz}
+	{Matrix or multidimensional array constant}
 \glsentm{o}{cset}{\cset A}
-	{Kostanta skup}
+	{Set constant}
 \glsentm{o}{rvar}{\rvar a,\,\rvar A,\,\rvar\theta}
-	{Slučajna varijabla}
+	{Random variable}
 \glsentm{o}{rvec}{\rvec a,\,\rvec\theta}
-	{Slučajni vektor ili niz}
+	{Random vector or sequence}
 \glsentm{o}{rmat}{\rvec A,\,\rvec\Theta}
-	{Slučajna matrica ili višedimenzionalni niz}
+	{Random matrix or multidimensional array}
 \glsentm{o}{rset}{\rset A}
-	{Slučajni skup ili multiskup}
+	{Random set or multiset}
 \glsentm{o}{text}{\text{a},\,\text{riječ}}
-	{Oznaka koja ne predstavlja matematički objekt}
+	{Textual label not representing an object}
 
 % Konstante
-\glsgroup{k}{Konstante}{}
+\glsgroup{k}{Constants}{}
 \glsentm{k}{emptyset}{\cbr{}}
-	{Prazni skup}
+	{Enpty set}
 \glsentm{k}{e}{\const e}
-	{Konstanta za koju vrijedi $\od{}{x}\const e^x=\const e^x$}
+	{The number that satisfies $\od{}{x}\const e^x=\const e^x$}
 \glsentm{k}{nulvek}{\cvec 0}
-	{Nul-vektor}
+	{Null-vector}
 \glsentm{k}{kanvek}{\cvec e_i}
-	{$i$-ti vektor kanonske baze}
+	{$i$-th canonical basis vector}
 \glsentm{k}{jedvek}{\cvec 1}
-	{Zbroj svih vektora kanonske baze}
+	{The sum of all canonical basis vectors}
 \glsentm{k}{mati}{\cvec I,\,\cvec I_n}
-	{Matrica identiteta (s $n$ redaka i stupaca)}
+	{Identity matrix (with $n$ rows/columns)}
 \glsentm{k}{cset}{\N,\Z,\R,\C}
-	{Poznati skup}
+	{A standard set}
 \glsentm{k}{Rpos}{\R_{\geq 0},\,\R_{> 0}}
-	{Skup nenegativnih/pozitivnih realnih brojeva}
+	{The set of all non-negative/positive real numbers}
 
 % Skupovi i nizovi
-\glsgroup{sn}{Definiranje skupova i nizova}{}
+\glsgroup{sn}{Defining sets and arrays}{}
 \glsentm{sn}{range}{a\bidot b}
-	{Kraći zapis za $a,..,b$}
+	{Shorthand notation for $a,..,b$}
 \glsentm{sn}{setrange}{\cbr{a\bidot b}}
-	{Skup cijelih brojeva od $a$ do $b$}
+	{A subset of integers from $a$ to $b$}
 \glsentm{sn}{setdefset}{\cbr{f(a)\colon P(a)},\, \cbr{f(a)}_{P(a)}}
-	{Skup čiji su elementi definirani preko funkcije $f$ i predikata $P$}
+	{A set with elements defined by a function $f$ and a predicate $P$}
 \glsentm{sn}{setdefsetimp}{\cbr{f(a)}_{a}}
-	{Skup čiji su elementi definirani preko funkcije $f$ i varijabli $a$ iz implicitno određenog skupa}
+	{A set with elements defined by a function $f$ and variables $a$ from an implicitly defined set}
 \glsentm{sn}{setdefn}{\cbr{a_1\bidot a_n},\,\cbr{a_i}_{i=1\bidot n}}
-	{Skup s $n$ elemenata}
+	{A set with $n$ elements}
 \glsentm{sn}{rowvec}{\sbr{x_1,\bidot,x_n}}
-	{Vektor redak}
+	{A row vector}
 \glsentm{sn}{ndarrdef}{\sbr{a_i}_{i}, \sbr{a_{i,j}}_{i,j}, \sbr{a_{i,j,k}}_{i,j,k}}
-	{Višedimenzionalni niz s implicitnim ili neodređenim brojem elemenata}
+	{A multidimensional array with an implicit or undefined number of elements}
 \glsentm{sn}{intco}{\intco{a,b}}
-	{Poluzatvoreni interval}
+	{A semi-closed interval}
 %\glsentm{sn}{colvec}{\del{x_1,\bidot,x_n}}
 %	{$n$-torka}
 
 % Donji i gornji indeks
-\glsgroup{i}{Donji i gornji indeks}
+\glsgroup{i}{Subscript and superscript}
 {U donjem i gornjem indeksu oznake mogu biti oznake drugih matematičkih objekata ili slova ili riječi koje ne predstavljaju matematičke objekte. Redni brojevi elemenata vektora ili višedimenzionalnih nizova se, ako nije određeno drugačije, pišu u donjem indeksu oznake vektora u uglatim zagradama. Npr. $i$-ti element vektora $\vec a=\sbr{a_1,.., a_n}^\tp$ je $\vec a_\ind{i}=a_i$. Indeksi kod $n$-dimenzionalnih nizova mogu biti i vektori iz $\N^{n}$, ili kombinacije vektora manje dimenzije sa skalarima.}
 \glsentm{i}{gdindeks}{a_\text{d}^\text{g}}
 	{Varijabla s oznakama u donjem i gornjem indeksu}
@@ -216,22 +216,22 @@
 \glsentm{tv}{unif}{\mathcal{U}(\set A)}
 	{Uniformna razdioba nad skupom $\set A$}
 
-% Teorija informacije
-\glsgroup{ti}{Teorija informacije}{}
+% Information theory
+\glsgroup{ti}{Information theory}{}
 \glsentm{ti}{I}{\I(\set A)}
-	{Sadržaj informacije događaja $\set A$}
+	{Information content of event $\set A$}
 \glsentm{ti}{entropy}{\H(\rvar a)}
-	{Entropija}
+	{Entropy}
 \glsentm{ti}{diffent}{\h(\rvar a)}
-	{Diferencijalna entropija}
-\glsentm{ti}{mutinf}{\I(\rvar a,\rvar b)}
-	{Međusobna informacija}
+	{Differnetial entropy}
+\glsentm{ti}{mutinf}{\I(\rvar a;\rvar b)}
+	{Mutual information}
 \glsentm{ti}{condent}{\H(\rvar a\mid\rvar b)}
-	{Uvjetna entropija}
+	{Conditional entropy}
 \glsentm{ti}{crossent}{\H_{\rvar b}(\rvar a)}
-	{Unakrsna entropija}
-\glsentm{ti}{Dkl}{\Dkl{\rvar a}{\rvar b}}
-	{Kullback-Leiblerova divergencija (relativna entropija)}
+	{Cross entropy}
+\glsentm{ti}{relent}{\Dist_{\rvar b}(\rvar a)}
+	{Relative entropy (Kullback-Leibler divergence)}
 
 % Grafovi
 \glsgroup{g}{Grafovi}{}
@@ -245,41 +245,32 @@
 	{Skup čvorova nasljednika čvora $a$ u grafu $G$}
 
 % Ostalo
-\glsgroup{f}{Ostale matematičke oznake}{}
+\glsgroup{f}{Other}{}
 \glsentm{f}{funcset}{\set A\to\set B}
-	{Skup funkcija s domenom $\set A$ i kodomenom $\set B$}
-\glsentm{f}{func}{\funcdef{f}{\set A}{\set B}}
-	{Funkcija s domenom $\set A$ i kodomenom $\set B$}
-\glsentm{f}{funcdef}{x\mapsto g(x)}
-	{Definicija funkcije; funkcija koja preslikava $x$ iz domene u $g(x)$ iz kodomene}
+	{A set of functions with domain $\set A$ and codomain $\set B$}
+%\glsentm{f}{func}{\funcdef{f}{\set A}{\set B}}
+%	{Funkcija s domenom $\set A$ i kodomenom $\set B$}
+%\glsentm{f}{fusnc}{f\in(\set A\to\set B)}
+%	{Funkcija s domenom $\set A$ i kodomenom $\set B$}
+\glsentm{f}{funcdefs}{f\in(\set A\to\set B)}
+	{Function definition; a function mapping from its domain $\set A$ to its codomain $\set B$}
+\glsentm{f}{funcdef}{x\mapsto f(x)}
+	{Function definition; a function mapping $x$ from its domain to $f(x)$ in its codomain}
 \glsentm{f}{fadd}{f+g}
-	{Zbroj funkcija}
+	{Sum of functions}
 \glsentm{f}{fmul}{fg}
-	{Umnožak funkcija}
+	{Product of functions}
 \glsentm{f}{conv}{f*g}
-	{Konvolucija funkcija}
+	{Convolution of functions}
 \glsentm{f}{fscalprod}{\braket{f}{g}}
-	{Skalarni produkt funkcija}
+	{Scalar product of functions}
 \glsentm{f}{card}{\envert{\set A}}
-	{Kardinalitet skupa}
+	{Set cardinality}
 \glsentm{f}{dirac}{\dirac\del{\cdot}}
-	{Diracova delta}
+	{Dirac delta}
 \glsentm{f}{doublebracket}{\enbbracket{\cdot}}
-	{Iversonova uglata zagrada; $\enbbracket{P}=\begin{cases} 1, & P \equiv \top \\ 0, & P \equiv \bot \end{cases}$}
-%\glsentm{f}{mod}{\modfunc(a,b)}
-%	{Ostatak pri dijeljenju cijelih brojeva; $\modfunc(a,b)\coloneqq a-\lfloor a/b\rfloor b$}
-
-% Riječi
-\glsgroup{r}{Fraze}{}
-\glsent{r}{dv}{dimenzija vektora}
-	{Broj komponenata ili kardinalitet baze vektorskog prostora}
-\glsent{r}{ndv}{$n$-dimenzionalni vektor}
-	{Vektor s dimenzijom $n$}
-\glsent{r}{idv}{$i$-ta komponenta vektora $\vec a$}
-	{$\vec a_{[i]}$}
-\glsent{r}{ndn}{$n$-dimenzionalni niz}
-	{Niz (engl. \textit{array}) iz $\R^{d_1\times\dots\times d_n}$, tj. postoji $\funcdef{f}{\cbr{1..d_1}\times\dots\times\cbr{1..d_n}}{\R}$ tako da za svaku $n$-torku $\vec i$ iz njene domene vrijedi $\vec A_\ind{\vec i} = f(\vec i)$}
-\glsent{r}{idn}{$i$-ta dimenzija niza}
-	{$d_i$, ako je niz iz $\R^{d_1\times\dots\times d_n}$}
-\glsent{r}{nd}{$n$-D}
-	{$n$-dimenzionalan}
+	{Iverson bracket; $\enbbracket{P}=\begin{cases} 1, & P \equiv \top \\ 0, & P \equiv \bot \end{cases}$}
+\glsentm{f}{image}{f\sbr{\set A}}
+	{Image of $\set A$ (subset of the domain) under $f$; $f\sbr{\set A} \coloneqq \cbr{f(a)\mid a\in\set A}$}
+\glsentm{f}{invimage}{f^{-1}\sbr{\set B}}
+	{Inverse image (preimage) of $\set B$ (subset of the codomain) under $f$; $f^{-1}\sbr{\set B} \coloneqq \cbr{a\mid f(a)\in\set B}$}

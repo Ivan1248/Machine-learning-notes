@@ -5,6 +5,8 @@
 \def\right#1{\originalright#1\mathclose{}}
 
 \usepackage{amsmath}
+\usepackage{amssymb}  % loads amsfonts
+
 \usepackage{mathtools}  % \coloneqq
 %\usepackage{bm}
 %\usepackage[utopia]{mathdesign}
@@ -16,8 +18,8 @@
 %\usepackage{commath}  % calculus, perentheses
 % https://tex.stackexchange.com/questions/135944/commath-and-ifinner/135985#135985
 %
-\newcommand{\dif}{\mathop{}\!\mathrm{d}}
-\newcommand{\Dif}{\mathop{}\!\mathrm{D}}
+\DeclareMathOperator{\dif}{d \!}
+\DeclareMathOperator{\Dif}{D \!}
 
 \makeatletter
 \newcommand{\spx}[1]{%
@@ -117,10 +119,10 @@
 \usepackage{etex}
 \newcommand{\nunder}[2][5]{\mathrlap{\mkern\the\numexpr#1/2mu\relax\underline{\phantom{\mathrm{#2}\mkern-#1mu}}}\mathrm{#2}}
 \newcommand{\subline}[2][n]{%
-    \makebox[\widthof{$#2$}/2]{}%
-    \smash{\mathclap{#2}\raisebox{0.04em}{%
+    \makebox[\widthof{$#2$}/2]{}\mathclap{#2}%
+    \text{\smash{\raisebox{0.04em}{% 0.04
         $\mathclap{\underline{\hphantom{#1}\vphantom{#2}}}$%
-    }}%
+    }}}%
     \makebox[\widthof{$#2$}/2]{}%
 }
 \newcommand{\rvarstyle}[1]{{{\subline[i]{#1}}}}
@@ -149,8 +151,8 @@
 \DeclareMathOperator*{\argmin}{arg\,min} % thin space
 \DeclareMathOperator*{\argmax}{arg\,max}
 \let\P\relax
-\DeclareMathOperator*{\P}{\mathrm{P}}
-\DeclareMathOperator*{\p}{\mathrm{p}}
+\newcommand{\P}{\mathrm{P}}
+\newcommand{\p}{\mathrm{p}}
 \DeclareMathOperator*{\E}{\mathrm{I\kern-.282em E}}
 \DeclareMathOperator*{\D}{\mathrm{I\kern-.282em D}}
 \DeclareMathOperator*{\Cov}{\mathrm{Cov}}
@@ -219,10 +221,11 @@
 \newcommand{\IoU}{\mathit{IoU}}
 \newcommand{\mIoU}{\mathit{mIoU}}
 
-% operators
+% operators and relations
 \newcommand{\bidot}{\mkern1.5mu{..}\mkern1.5mu}
 %\newcommand\sheq{\mkern1.5mu{=}\mkern1.5mu}
 %\renewcommand{\dots}{...}
+
 
 % no vertical space stretching around display math
 \usepackage[nodisplayskipstretch]{setspace}

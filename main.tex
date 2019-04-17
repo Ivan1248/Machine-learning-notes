@@ -8,6 +8,8 @@
 \input{imports/figures}
 \input{imports/diagrams}
 \input{imports/misc}
+\usepackage[sort&compress,round,comma,authoryear]{natbib}
+
 
 
 
@@ -15,19 +17,78 @@
 \author{}
 \date{}
 
+\input{imports/glossary}
+
+
 \begin{document}
 
 \maketitle
 
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+\newpage
+
+\begingroup
+\onehalfspacing
+\printunsrtglossary[type=symbols,style=supergroup,title={Notation}]
+\endgroup
+
+
+
+
 \section{Probability}
+
+%http://www.workinginuncertainty.co.uk/probtheory_notation.shtml
+
+\textbf{Probability of an event} $\P(E)$
+
+The distribution of a random variable $\rvar x$ is denoted $\p_\rvar{x}$. If $\rvar x$ is known to be discrete, its distribution can be denoted with $\P_\rvar{x}$. 
+\begin{align}
+    \P_\rvar{x}(x) &= \P(\rvar x = x) \text.
+\end{align}
+\begin{align}
+    \p_\rvar{x}(x) &= \lim_{\epsilon\to0}\frac{\P\del{\rvar x\in B_\epsilon(x)}}{\int_{x'\in B_\epsilon(x)}\dif x'} \text.
+\end{align}
+\begin{align}
+    \P_\rvar{x}(x\in A) = \int_{x\in A}\dif \p_\rvar{x}(x) \text.
+\end{align}
+
+\subsection{Functions of random variables}
+
+For any function $f\in \set A\to\set B$, we will use the same symbol to denote an equivalent function that maps random variables taking values in $\set A$ to random variables taking values in $\set B$:
+\begin{align}
+    \P(f(\rvar a)\in \set B_1) \coloneqq \P\del{\rvar a\in f^{-1}\sbr{\set B_1}} \text,
+\end{align}
+where $f^{-1}\sbr{\set B_1} \coloneqq \cbr{a\mid f(a)\in \set B_1}$ is what we call the preimage of $\set B_1\subseteq\set B$ under $f$.
 
 \textbf{Conditional expectation}:
 \begin{align}
-    \E(\rvar x\mid\rvar y) = \del{y\mapsto \E(\rvar x\mid y)}(\rvar{y}) \text.
+    \E\del{\rvar x\mid\rvar y} = \del{y\mapsto \E\del{\rvar x\mid y}}(\rvar{y}) \text.
 \end{align}
-The conditional expectation $\E(\rvar x\mid\rvar y)$ is a function of the random variable $\rvar y$ and, thus, is a random variable as well. 
+The conditional expectation $E\del{\rvar x\mid\rvar y}$ is a function of the random variable $\rvar y$ and, thus, is a random variable as well. 
 
+\section{Statistics}
 
+\subsection{Monte Carlo integration}
+
+Monte Carlo integration (approximation) is a method of approximating integrals that can be expressed as expectations of some random variables.
+
+Let $u\in \set A\to \R$ be a function. Let $I\coloneqq\int u(x)\dif x$ be an integral that is hard to compute. If we express $u$ as the product of a function $f$ and a probability density function (distribution) $p$, $u(x) = f(x)p(x)$, the integral $I$ can be expressed as the expectation of $f(\rvar x)$, where $\rvar x$ is distributed according to $p$:
+\begin{align}
+    I &= \int f(x)\dif x = \int f(x)p(x)\dif x = \E_{x\sim p}(f(x)) \text .
+\end{align}
+This expectation can be approximated with the following estimator:
+\begin{align} 
+    \rvar{\hat I}_n \coloneqq \frac{1}{n}\sum_{i=1\bidot n} f(\rvar x_i) \text{,}
+\end{align}
+where $\rvar x_i\sim p$. The estimator $\rvar{\hat I}_n$ is unbiased if $\rvar x_i$ are independent and it is valid if variances of $u(\rvar x_i)$ are bounded.
+
+\subsection{Rejection sampling}
+
+\subsection{Importance sampling}
+$I\coloneqq\int_{x\in \set B}f(x)\dif x$
 
 \section{Information theory}
 
@@ -47,27 +108,35 @@ functionals
 \begin{align}
     \H(\rvar x) &= \E_{\rvar x}\I(\rvar x=x) = -\E\ln\P(\rvar x) \text.
 \end{align}
-The same formula applies for joint distributions, e.g. for the distribution $\P(\rvar x,\rvar y)$, we denote entropy (also called \textbf{joint entropy}) by $\H(\rvar x,\rvar y)$.
+The same formula applies for joint distributions, e.g.\ for the distribution $\P(\rvar x,\rvar y)$, we denote entropy (also called \textbf{joint entropy}) by $\H(\rvar x,\rvar y)$. Entropy is a common measure of uncertainty.
 
-\textbf{Cross entropy} -- expected message length if the optimal code for $\P(\rvar y)$ is used, but $\P(\rvar x)$ is sampled.
+\textbf{Cross entropy} -- expected message length if the optimal code for $\P_\rvar{y}$ is used, but $\P_\rvar{x}$ is sampled.
 \begin{align}
     \H_\rvar{y}(\rvar x) = \E_{\rvar x}\I(\rvar y=x) = -\E_{\rvar x}\ln\P(\rvar y=x) \text.
 \end{align}
 
-\textbf{Relative entropy} (Kullback–Leibler (KL) divergence) -- difference of cross entropy and entropy, measures how much $P(\rvar y)$ differs from $\P(\rvar x)$:
+\textbf{Relative entropy} (Kullback–Leibler (KL) divergence) -- difference of cross entropy and entropy, measures how much $\P_\rvar{y}$ differs from $\P_\rvar{x}$:
 \begin{align}
     \Dist_\rvar{y}(\rvar x) = \H_\rvar{y}(\rvar x) - \H(\rvar x) = \E_\rvar{x}\del{\I(\rvar y=x)-\I(\rvar x=x)} = \E_\rvar{x}\ln\frac{\P(x)}{\P(\rvar y=x)} \text.
 \end{align}
 
-\textbf{Mutual information}.
+\textbf{Mutual information} of random variables is the expectation of how much knowing the outcome of one of them gives information (or reduces the uncertainty) about the other:
 \begin{align}
-    \I(\rvar x; \rvar y) = \H(\rvar x) +\H(\rvar y) - \H(\rvar x, \rvar y) \text.
+    \I(\rvar x; \rvar y) = \H(\rvar x) - \H(\rvar x\mid\rvar y) = \H(\rvar y) - \H(\rvar y\mid\rvar x) = \H(\rvar x) +\H(\rvar y) - \H(\rvar x, \rvar y) \text.
 \end{align}
-If there is a common condition, we can use $\I\del{\rvar x; \rvar y\mid z}$ as a shorter notation for $\I\del{(\rvar x\mid z); (\rvar y\mid z)}$. If we want to express mutual information between e.g. $\rvar x$ and $\rvar y\mid z$, to avoid ambiguity, we do it like this: $\I(\rvar x;(\rvar y\mid z))$.
+If there is a common condition, we can use $\I\del{\rvar x; \rvar y\mid z}$ as a shorter notation for $\I\del{(\rvar x\mid z); (\rvar y\mid z)}$. If we want to express mutual information between e.g.\ $\rvar x$ and $\rvar y\mid z$, we do it like this: $\I(\rvar x;(\rvar y\mid z))$, without ambiguity.
 
-\subsubsection{Conditional counterparts}
+Mutual information can also be expressed as relative entropy:
+\begin{align}
+    \I(\rvar x; \rvar y) = \Dist_{\P_{\rvar x}\P_\rvar{y}}(\P_{\rvar x,\rvar y}) \\
+    \I(\rvar x; \rvar y) = \Dist_{\P[\rvar x]\P[\rvar y]}(\P[\rvar x,\rvar y]) \\
+    \I(\rvar x; \rvar y) = \Dist_{\P(\rvar x)\P(\rvar y)}(\P(\rvar x,\rvar y)) \\
+    \I(\rvar x; \rvar y) = \Dist_{[\rvar x][\rvar y]}([\rvar x,\rvar y]) \text.
+\end{align}
 
-Conditional counterparts of the information-theoretic measures have random variables in the condition-part of the expression that represents the argument of a measure. E.g. \textbf{Conditional entropy} is defined like this:
+\subsubsection{Conditional measures}
+
+Conditional counterparts of the information-theoretic measures have random variables in the condition-part of the expression that represents the argument of a measure. e.g.\ \textbf{Conditional entropy} is defined like this:
 \begin{align}
     \H(\rvar x\mid\rvar y) &= \E_{\rvar y}\H(\rvar x\mid y) \text.
 \end{align}
@@ -77,7 +146,7 @@ Similarly, conditional cross-entropy can be defined like this:
 \end{align}
 conditional mutual information like this:
 \begin{align}
-    \I(\rvar x; \rvar y\mid \rvar z) = \E_\rvar{z}\I\del{\rvar x; \rvar y \mid z)} \text.
+    \I(\rvar x; \rvar y\mid \rvar z) = \E_\rvar{z}\I\del{\rvar x; \rvar y \mid z} \text.
 \end{align}
 
 \subsubsection{Differential counterparts}
@@ -99,17 +168,12 @@ conditional mutual information like this:
 
 \subsection{Expressing uncertainty}
 
-The basic and most complete way to express uncertainty are probability distributions. From a probability distribution, other uncertainty measures can be derived. Some common ones are the distribution of a derived random variable (a random variable which is a function of the original one), a parameter or a property of the distribution (e.g. the probability of the most certain value of the random variable or the entropy of the distribution).
-
-$\rvec{x}_i, p(\rvec{x}_i=\vec x\mid \rvec{y}=2, \rvar y=8, \rvar{z}=7, \rvec{z}=\vec 0, \rvar j=7, \rvec i=0, \rvec l=44), \rset{D}, \set{D}$
-
-\begin{equation}\label{eq:conv_relu}
-x^l_{i, j} = \sum_{a=0}^{k-1} \sum_{b=0}^{k-1} w_{a,b} \max(x^{l-1}_{i+a, j+b}, \theta_{a,b})
-\end{equation}
+The basic and most complete way to express uncertainty are probability distributions. From a probability distribution, other uncertainty measures can be derived. Some common ones are the distribution of a derived random variable (a random variable which is a function of the original one), a parameter or a property of the distribution (e.g.\ the probability of the most certain value of the random variable or the entropy of the distribution).
 
 
 
-\subsection{Epistemička i aleatorna nesigurnost}
+
+\subsection{Epistemic and aleatory uncertainty}
 
 %\paragraph{Što je epistemička nesigurnost?} 
 \emph{Epistemička nesigurnost} (nesigurnost modela) je nesigurnost u model ili parametre. Ona se može smanjiti uz više podataka/informacija. \emph{Epistemička nesigurnost predikcije} dolazi od nesigurnosti u model/parametre.
@@ -122,8 +186,7 @@ Kad parametre modela procjenjujemo točkasto, nemamo aposteriornu razdiobu param
 
 Kod diskriminativnog modela izlazna razdioba $p(y\mid x, \theta_\text{MAP})$ izražava aleatornu nesigurnost.
 
-%\paragraph{Je li ukupna nesigurnost zbroj epistemičke i aleatorne?}
-
+\paragraph{Je li ukupna nesigurnost zbroj epistemičke i aleatorne?}
 Mislim da procjena ukupne nesigurnosti ovisi o tome koliko je dobro procijenjena epistemička nesigurnost. Što je lošija procjena aposteriorne razdiobe parametara, to je procjena epistemičke nesigurnosti lošija.
 
 
@@ -134,15 +197,115 @@ Neka je $D_{\text{train}}$ razdioba iz koje su došli primjeri za učenje. Diskr
 Ipak, pokazano je se da se (kod nekih modela) izvanrazdiobni primjeri često mogu dosta dobro prepoznavati na temelju izlazne razdiobe modela s točkasto procijenjenim parametrima. 
 
 
-\subsection{Uspješnost procjene epistemičke nesigurnosti kod aproksimacija bayesovskog zaključivanja o parametrima}
+\subsection{Successfulness of epistemic uncertainty estimation with bayesian inference approximation}
 
 
-\subsection{Nesigurnost i  generalizacija}
+
+\section{Adversarial examples and generalization}
+
+Even for models that perform similar to humans on testing data, it has been shown that, by perturbing input examples even inperceptibly for humans, the models can be made to significantly change their predictions, i.e.\ make confident wrong predictions \citep{Szegedy:2013:IPNN, Goodfellow:2014:EHAE}. Such perturbed input examples are called \textbf{adversarial examples}. The existence of adversarial examples indicates that such models are probably performing well for somewhat wrong reasons, without actually \textit{understanding data}.
+
+\subsection{Defining and finding adversarial examples}
+
+Let $\set X$ be the input space, and $d\in(\set X\times\set X\to \R^+)$ a \textbf{distance function} that can be used to define similarity between inputs. For each example $\vec x$ we can also define its \textbf{neighbourhood} as $B_{\epsilon} = \cbr{\vec x'\colon d(\vec x', \vec x) \leq \epsilon}$, $\epsilon$ being the maximum distance from the example.
+
+Ideally, the neighbourhood of an example $\vec x$ should be the set of \textit{perceptually similar} examples that all belong to the same class as $\vec x$ (their true class may be at most ambiguous), but it is hard to define such a neighbourhood. A practical and common way of defining the neighbourhood function (for images) is to let the distance function $d$ be a $L^p$ distance where $p$ is usually $\infty$ or $2$. Note that if an example is very near the true class boundary, such a neighbourhood may contain examples actually belonging to another class. 
+
+Finding an adversarial example can be defined as an optimization problem of maximizing the loss with respect to the input with the constraint that the input is in the neighbourhood $B_\epsilon(\vec x)$:
+\begin{align}
+    \tilde{\vec x} = \argmax_{\vec x'\in B_\epsilon(\vec x)} L(y, h(\vec x')) , \label{eq:untargeted-loss-attack}
+\end{align}
+where $y$ is either the true label or the predicted label. Let $\hat{h}(\vec x) = \argmax_{y'} h(\vec x')_\ind{y'}$ denote the function that assigns the label with the highest probability to an input.
+An objective can also be to find the $\tilde{\vec x}$ closest to $\vec x$ such that the classifier misclassifies it \citep{Moosavi-Dezfooli:2016:DFSAMFDNN}:
+\begin{align}
+    \tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x) \neq y} d(\vec x', \vec x). \label{eq:untargeted-closest-attack}
+\end{align}
+
+The described objectives, where it only matters that the adversarial example is misclassified, are objectives for \textbf{untargeted adversarial attacks}. There are also \textbf{targeted adversarial attacks}, where the objective is to create an adversarial example such that the model classifies it as some desired class. Targeted attack objectives corresponding to equations \eqref{eq:untargeted-loss-attack} and \eqref{eq:untargeted-closest-attack} are:
+\begin{align}
+    \tilde{\vec x} = \argmin_{\vec x'\in B_\epsilon(\vec x)} L(y_\text{t}, h(\vec x')) \label{eq:targeted-loss-attack}
+\end{align}
+and
+\begin{align}
+    \tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x) = y_\text{t}} d(\vec x', \vec x), \label{eq:targeted-closest-attack}
+\end{align}
+where $y_\text{t}$ denotes the adversarial target label.
+
+Adversarial examples can also be generated without knowledge of the true label. Such adversarial examples are called \textbf{virtual adversarial examples}.
+\cite{Miyato:2017:VATRMSSSL} propose the following objective for adversarial training:
+\begin{align}
+    \tilde{\vec x} = \argmin_{\vec x'\in B_\epsilon(\vec x)} D((\rvec y\mid \rvec x, \rvec\theta), (\rvec y\mid \rvec x = \vec x', \rvec\theta)),  
+\end{align}
+where $D$ is some non-negative function that represents distance between distributions. Other (untargeted) attacks can also produce virtual adversarial examples by using the predicted label $\hat{h}(\vec x)$ instead of the true label in the loss.
+
+\subsubsection{Transferability}
+
+Common (naturally trained) CV models (algorithms) are biased similarly with respect to having adversarial examples -- they are nonrobust in similar ways. 
+
+Can this bias be easily overcome? Unfortunately, there seems not to be much evidence indicating this.
+
+Overdependence on semantically low-level features.
+
+\subsubsection{Adversarial training}
+
+\cite{Kurakin:2016:AMLS} note that by using the true label in the loss in untargeted attacks ($y$ in equation \eqref{eq:untargeted-loss-attack}) can cause
+
+\subsubsection{Distance metrics for images}
+
+Usually, an $L^p$ distance ($d(\vec x', \vec x)=\lVert\tilde{\vec x}-\vec x\rVert_p$) is used as a distance metric for adversarial examples.
+
+\paragraph{Scale-invariant norms.}
+Let $\vec x$ denote some image (or perturbation) and $\vec x_\lambda$ the same image with dimensions scaled by $\lambda$. By having more pixels, $\vec x_\lambda$ has a greater norm. The scaled image contains $\lambda^2$ the number of pixels of the original image, and every pixel approximately repeated $\lambda^2$ times. In order to make the norm of the scaled image equal to the norm of the original image, the first though might be to divide the norm by $\lambda^2$. As the following shows, this would work for $p=1$, but not otherwise: 
+\begin{align}
+    \enVert{\vec x_\lambda}_p 
+    &= \del{\sum_{u\in\cbr{0\bidot\lambda H}}\sum_{v\in\cbr{0\bidot\lambda W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+    &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+    &= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+    &= \lambda^\frac{2}{p} \enVert{\vec x}_p \text{.}
+\end{align}
+For non-infinite $p$, if we have $2$ perceptually similar perturbation of different resolutions, the higher-resolution one will have a greater norm by a factor of $(\lambda^2)^\frac{1}{p}$. Hence, we can define scale invariant equivalents of $L^p$ norms by dividing the norm by the scale factor of the image. The scale factor can be relative to an image with area $1$, so we can use the number of pixels as $\lambda^2$. We can define scale-invariant norms like this:
+\begin{align}
+    \enVert{\vec x}_{\text{s}p} \coloneqq \frac{\enVert{\vec x}_p}{\del{H_\vec{x}W_\vec{x}}^\frac{1}{p}},
+\end{align}
+where $H_\vec{x}$ and $W_\vec{x}$ are height and width of $\vec x$. Such norms could probably enable more informative comparison of norms between different-resolution images and different datasets, and easier hyperparameter choice for adversarial training.
+
+Maybe something similar could be done about objects of different scale?
+
+...
+\paragraph{Expectation of $p$-norms of uniformly random vectors.}
+Let $\vec x \sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}^n}$ (which is equivalent to each of its components being sampled from an uniform distribution).
+%$\vec x = \del{x_i\colon x_i\sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}}, i\in\cbr{1\bidot n}}$.
+\begin{align}
+    \E_i \vec x_i
+\end{align}
+
+\paragraph{Local $p$-norm and hiererchical norm.}
+Let $\vec k$ denote a non-negative $2$-D kernel with $\enVert{\vec k}_1=1$, eg. Gaussian cenetered at $(0,0)$. Let $\vec x$ denote an image perturbation and assume that it has a single channel for simplicity.
+We can define the local $p$-norm around a pixel $(i, j)$ as
+\begin{align}
+    \mathrm{LocalNorm}_{p,\vec k}(\vec x)_\ind{i,j} = \del{\envert{\vec x}^p * \vec k}_\ind{i,j}^\frac{1}{p},
+\end{align}
+where the absolute value and powering operatons are elementwise.
+
+We can then define a bi-level hierarchical $(p_1,p_2)$-norm as $\enVert{\mathrm{LocalNorm}_{p_1,\vec k}(\vec x)}_{p_2}$. This can be generalizad to a multi-level norm $(p_1,..,p_n)$-norm by chaining multiple local norms with potentially different kernels until the last, global, $p_n$-norm.
+
+Why?
+
+%Using e.g a $(1,\infty)$-norm for contraining adversarial perturbations could allow for more flexible perturbations locally, but having local changes not add up to the global norm.
+
+%To make the analysis easier, we can consider $\vec x$ and $\vec x_\lambda$ to be continous functions with delta-peaks at the coordinates of pixels. 
+
+%\begin{align}
+%    \enVert{\vec x_\lambda}_p = \del{ \int_{u\in\intcc{0,\lambda h}\cap\N}\int_{v\in\intcc{0,\lambda w}\cap\N} {\vec x_\lambda}\del{u, v}}^{\frac{1}{p}}
+%\end{align}
+
+\subsection{Making adversarially robust classifiers}
+
 
 
 \section{Generative adversarial networks}
 
-\subsection{Getting the example probability $\p(\vec x)$ from the generator}
+\subsection{Getting the probability of the example from the generator}
 
 first paragraph
 
@@ -151,6 +314,164 @@ case 1) normal generator
 case 2) invertible generator
 
 
+\section{Paper summaries}
+
+\subsection{The Conditional Entropy Bottleneck (Anonymous, 2018)}
+
+URL: \url{https://openreview.net/forum?id=rkVOXhAqY7}.
+
+
+\section{p}
+
+Neka je odnos između slučajnih varijabli $\rvar x$ i $\rvar y$ definiran funkcijom $f$ koja ishode jedne slučajne varijable deterministički preslikava u ishode druge, što označavamo ovako: $\rvar y = f(\rvar x)$.  Ako su $\rvar x$ i $\rvar y$ diskretne slučajne varijable, onda je razdioba slučajne varijable $\rvar y$ definirana ovako:
+\begin{align}
+	P_{\rvar y}(y) = \sum_{x\colon f(x)=y} P_\rvar{x}(x) \text{.}
+\end{align} 
+Ako su $\rvar x$ i $\rvar y$ kontinuirane slučajne varijable s vrijednostima iz $\R$ i $f$ je injektivna, može se pokazati \citep{Elezovic:2007:VSSV} da vrijedi
+\begin{align} \label{eq:gustoca-funkcije-sv}
+p_{\rvar y}(y) = p_\rvar{x}(x) \envert{\od{x}{y}} \text{.}
+\end{align} 
+Neka je $C_{\rvar x}(x) := \int_{-\infty}^{x} p_{\rvar x}(x') \dif{x'}$. Vrijednosti iz intervala $\intoo{x, x+\epsilon}$ na kojem je $f$ monotono rastuća preslikavaju se u interval $\intoo{f(x), f(x+\epsilon)}$. Granice su obrnute ako je $f$ monotono padajuća na tom intervalu. Budući da $\P\del{\rvar x\in\intoo{x, x+\epsilon}}=\P\del{\rvar y\in\intoo{f(x), f(x+\epsilon)}}$, vrijedi
+\begin{align}
+C_{\rvar x}(x+\epsilon)-C_{\rvar x}(x) = 
+C_{\rvar y}(f(x+\epsilon))-C_{\rvar y}(f(x)) \text{.}
+\end{align}
+Ako obje strane jednadžbe dijelimo s $\epsilon$ i pustimo $\epsilon\to0$, 
+\begin{align}
+	\lim_{\epsilon\to 0}\frac{C_{\rvar x}(x+\epsilon)-C_{\rvar x}(x)}{\epsilon} = \lim_{\epsilon\to 0}\frac{C_{\rvar y}(f(x+\epsilon))-C_{\rvar y}(f(x))}{\epsilon} \text{.}
+\end{align}
+Redom, prema definiciji derivacije, pravilu derivacije složene funkcije i definiciji funkcija $C_\rvec{x}$ i $C_\rvec{y}$ kao integrala gustoće vjerojatnosti, slijedi:
+\begin{align}
+\od{}{x}C_{\rvar x}(x) &= \od{}{x}C_{\rvar y}(f(x)) \text{,}\\
+\od{}{x}C_{\rvar x}(x) &= \od{}{f(x)}C_{\rvar y}(f(x))\od{}{x}f(x) \text{,}\\
+p_{\rvar x}(x) &= p_{\rvar y}(f(x))\od{}{x}f(x) \text{.} \label{eq:gustoca-funkcije-sv-dokaz-rastuci}
+\end{align}
+Može se pokazati da je za monotono padajuće intervale desna strana jednadžbe~\eqref{eq:gustoca-funkcije-sv-dokaz-rastuci} pomnožena s $-1$, iz čega uz jednadžbu~\eqref{eq:gustoca-funkcije-sv-dokaz-rastuci} slijedi
+\begin{align}
+p_{\rvar x}(x) &= p_{\rvar y}(y)\envert{\od{y}{x}} \text{,} \label{eq:gustoca-funkcije-sv-dokaz-xy}
+\end{align}
+gdje je $f(x)$ zamijenjen s $y$. Množenjem toga s $\envert{\od{x}{y}}=\envert{\od{y}{x}}^{-1}$ slijedi jednadžba~\eqref{eq:gustoca-funkcije-sv}. To pravilo se može poopćiti i na vektore. Onda vrijedi \citep{Murphy:2012:MLPP}
+\begin{align}
+p_{\rvec y}(\vec y)=p_\rvec{x}(\vec x)\envert{\det\pd{\vec x}{\vec y}} \text{.}
+\end{align}
+
+Neka je $\rvar z$ zbroj slučajnih varijabli $\rvar x$ i $\rvar y$. Onda vrijedi
+\begin{align}
+	p_{\rvar z}(z) = \int p_{\rvar x,\rvar y}(x, z-x)\dif x \text{.}
+\end{align}
+Ako su $\rvar x$ i $\rvar y$ nezavisne, onda to postaje konvolucija:
+\begin{align} \label{eq:nezavisne-gustoce-konvolucija}
+p_{\rvar z}(z) = \int p_{\rvar x}(x)p_{\rvar y}(z-x)\dif x \eqqcolon (p_{\rvar x}*p_{\rvar y})(z) \text{.}
+\end{align}
+
+\subsection{PDF of vector r.v. defined via a function of a vector r.v.}
+
+Let $f \in (\R^n\to\R^m)$ and $\rvec y = f(\rvec x)$. We want to compute the PDF of $\rvar y$, or, equivalently, the distribution $\p(\rvec y)$.
+\begin{align}
+    \pd{\rvec y}{\rvec x} \in \R^{m\times n}
+\end{align}
+
+For easier analysis, let's assume that $m=1$, i.e.\ $\rvec y$ is a scalar, and denote it with $\rvar y$. We want to compute its PDF.
+
+
+\section{Dense anomaly detection for dense prediction based on reconstruction error}
+
+Pretpostavljamo duboki diskriminativni model $h(\vec x;\vec\theta)$ s parametrima $\vec\theta$ koji ulaz $\vec x$ preslikava u vektor $\vec y$ koji predstavlja izlaznu razdiobu  $\p(\rvar y\mid \vec x, \vec\theta)$.
+
+previsoka sigurnost (postizanje male pogreške na skupu za učenje, kalibracija temperaturnim skaliranjem)
+
+kriva klasifikacija izvanrazdiobnih primjera
+
+neprijateljski primjeri
+
+\citep{Hendrycks:2016:BDMOODE}
+
+\citep{Guo:2017:CMNN}
+
+\citep{Lee:2017:TCCCDOOD}
+
+\citep{Liang:2017:PDOODENN}
+
+Neki pristupi za prepoznavanje anomalija/izvanrazdiobnih primjera (detaljnije opisati i s referencama):
+\begin{itemize}
+    \item iz predikcije -- očekujemo manju vjerojatnost i veću nesigurnost za izvanrazdioben primjere,
+    \item iz neke skrivene reprezentacije -- možemo analizirati razdiobe logita ili nečega drugoga i pomoću toga propoznavati izvanrazdiobne primjere,
+    \item eksplicitnim učenjem razlikovanja razdiobe skupa za učenje od neke pozadinske razdiobe,
+    \item korištenje generativnog modela za generiranje primjera iz područja male gustoće vjerojatnosti i korištenje njih kao izvanrazdiobnih primjera
+    \item korištenjem generativnog modela kod kojeg je moguće izračunati gustoću vjerojatnosti za primjer,
+    \item korištenjem rekonstrukcijske pogreške autoenkodera.
+\end{itemize}
+Neki pristup ise mogu kombinirati.
+
+
+\subsection{Autoencoders and GAN-s}
+
+.
+
+
+\subsection{Korištenje rekonstrukcijske pogreške autoenkodera za propoznavanje onoga što model ne zna da ne zna}
+
+Pretpostavljamo duboki diskriminativni model $h(\vec x;\vec\theta)$ s parametrima $\vec\theta$ koji ulaz $\vec x$ preslikava u vektor $\vec y$ koji predstavlja izlaznu razdiobu  $\p(\rvar y\mid \vec x, \vec\theta)$.
+
+
+\subsubsection{Korištenje autoenkodera za prepoznavanje izvanrazdiobnih primjera}
+
+\cite{Sabokrou:2018:ALOCCND} za otkrivanje anomalija u slici predlažu korištenje autoenkodera (s jako velikom skrivenom reprezentacijom) kojemu se kod učenja kao ulaz daje zašumljena slika. Uz autoenkoder se dodaje diiskriminator koji se uči a razlikuje izlaz autoenkodera od stvarnih primjera za učenje. Kao gubitak se koristi težinski zbroj kvadratne rekonstrukcijske pogreške i suparničkog gubitka. Kao primjeri se koriste mali izrazani dijelovi većih slika. Za prepoznavanje anomalija koristi se izlaz diskriminatora za rekonstruirani primjer.
+
+\cite{Pidhorskyi:2018:GPNDAA} isto predlažu pristup s autoenkoderom i superničkim gubitkom. Kod njih gubitak ima $3$ komponente: (1) suparnički gubitak koji potiče da primjeri za učenje "pokrivaju" cijelu zadanu (Gaussovu) razdiobu skrivene reprezentacije, (2) suparnički gubitak koji potiče da rekonstruirani primjeri budu iz razdiobe skupa za učenje (kao kod \cite{Sabokrou:2018:ALOCCND}) i (3) rekonstrukcijski gubitak. Kao mjera za procjenu je li primjer izvan razdiobe se koristi procjena $\p(\vec z\mid \set D)$ koja ovisi o udaljenosti od "manifolda". Trebam još pručiti kako se točno dobiva.
+
+Pretpostavljamo duboki diskriminativni model $h(\vec x;\vec\theta)$ s parametrima $\vec\theta$ koji ulaz $\vec x$ preslikava u vektor $\vec y$ koji predstavlja izlaznu razdiobu  $\p(\rvar y\mid \vec x, \vec\theta)$. Želimo prepoznavati izvanrazdiobne primjere pomoću autoenkodera.
+
+Neke ideje u vezi autoenkodera:
+\begin{itemize}
+    \item Koristiti dekoder s heteroskedastičkom \citep{Kendall:2017:WUNBDLCV} nesigurnošću u rekonstrukciju (modelirati $\p(\rvec x\mid \vec z)$) i $-\ln\p(\rvec x\mid \vec z)$ za empirijski gubitak.
+    \item Isprobati rekonstrukciju neke skrivene reprezentacije klasifikatora kako bi se u rekonstrukcijskoj pogrešci naglasile značajke bitne za klasifikaciju (semantički bitne). Možemo $h$ rastaviti na dvije funkcije: $h(\vec x) = (f_2\circ f_1)(\vec x)$ pa onda učime autoenkoder rekonstruirati $f_1(\vec x)$. Ako kao kao $f_1$ koristimo bijekciju, možemo vidjeti kako izgleda rekonstrukcija ulaza koja odgovara rekonstruiranoj reprezentaciji.
+    \item Isprobati klasifikaciju na temelju skrivene reprezentacije autoenkodera $\vec z$, koristiti i klasifikacijski gubitak za učenje kodera, vidjeti kako izgledaju rekonstrukcije. (Isprobati CEB?)
+    \item Minimalna reprezentacija autoenkodera onemogućuje neprijateljske primjere kojima je cilj postići dobru rekonstrukciju anomalije, pogotovo ako pretpostavimo dovoljno dobru funkciju rekonstrukcijske pogreške ili diskriminator.
+    \item Je li dobro poticati da skup za učenje pokriva cijelu razdiobu $\p(\rvec z)$? Onda će različite klase biti odmah jedna uz drugu -- malo izmijenimo $\vec z$ i dođemo u područje visoke gustoće za neku drugu klasu. Možda valja učiti razdiobu $\p(\rvec z\mid \set D)$ i znati koja su područja niže gustoće (margine) (kako?).
+    \item Dodati šum na ulaz autoenkodera. Možda bi valjalo nešta između gaussovog šuma i "rupa" za popunjavanje.
+\end{itemize}
+
+Osnovni model koji bih htio isprobati (na velikim slikama) je ovakav:
+\begin{alignat}{3}
+    &\vec x \overset{f_1}{\longmapsto} \vec h \overset{f_2}{\longmapsto} \vec y 
+    \quad&&\text{(klasifikator)} \text, \\
+    &\vec h \overset{e}{\longmapsto} \vec z \overset{d}{\longmapsto} \vec h_\text{r}
+    \quad&&\text{(autoenkoder skrivene reprezentacije)} \text.
+\end{alignat}
+Treba odrediti točan opis modela.
+
+Možemo isprobati i klasifikaciju na temelju rekonstrukcije:
+\begin{align}
+    &\vec h_\text{r} \overset{f_2}{\longmapsto} \vec y\text.
+\end{align}
+
+Možemo isprobati i klasifikaciju na temelju skrivene reprezentacije:
+\begin{align}
+    &\vec z \overset{f_z}{\longmapsto} \vec y \text,
+\end{align}
+i istovremeno učenje klasifikacije i rekonstrukcije.
+
+Bilo bi zanimljivo vidjeti kako izgleda rekonstrukcija ulazne slike na temelju izlaza autoenkodera ovisno o tome koji skriveni sloj se kodira:
+\begin{align}
+    &\vec h_\text{r} \overset{f_1^{-1}}{\longmapsto} \vec x_\text{r}
+    \quad \text{(inverz prvog dijela klasifikatora s ulazom $\vec h_\text{r}$)} \text.
+\end{align}
+Rekonstrukciju ulazne slike možemo dobiti ako koristimo neki model koji je bijektivan, npr. i-RevNet.
+
+
+\begin{align}
+    \min_{h} L_\text{c}(\vec y, \vec y^*) \\
+    \min_{d, e} L_\text{r}(\vec h,\vec h_\text{r})
+\end{align}
+
+\subsubsection{Što bih još htio isprobati}
+
+Kombinaciju \cite{Lee:2017:TCCCDOOD} i korištenja izvanrazdiobnih primjera u učenju.
+
+
+\bibliography{bibliography}
+\bibliographystyle{fer} 
 
 
 \end{document}
