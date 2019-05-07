@@ -155,22 +155,21 @@ conditional mutual information like this:
 
 \url{https://en.wikipedia.org/wiki/Information_theory_and_measure_theory}
 
-
 \subsection{Kolmogorov complexity}
-
 
 \subsection{Minimum description length}
 
 
+\section{Machine learning}
+
+\paragraph{An Occam's razor thought.} If the model (hypothesis search space) is simpler (smaller), we are more likely to find the correct hypothesis. If the correct hypothesis is complex, there will be more hypotheses consistent with the data and we are less likely to find the correct one anyway.
+
 
 \section{Uncertainty in machine learning}
-
 
 \subsection{Expressing uncertainty}
 
 The basic and most complete way to express uncertainty are probability distributions. From a probability distribution, other uncertainty measures can be derived. Some common ones are the distribution of a derived random variable (a random variable which is a function of the original one), a parameter or a property of the distribution (e.g.\ the probability of the most certain value of the random variable or the entropy of the distribution).
-
-
 
 
 \subsection{Epistemic and aleatory uncertainty}
@@ -260,27 +259,38 @@ Let $\vec x$ denote some image (or perturbation) and $\vec x_\lambda$ the same i
     \enVert{\vec x_\lambda}_p 
     &= \del{\sum_{u\in\cbr{0\bidot\lambda H}}\sum_{v\in\cbr{0\bidot\lambda W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
     &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+    &= \del{\lambda^2\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
     &= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
     &= \lambda^\frac{2}{p} \enVert{\vec x}_p \text{.}
 \end{align}
 For non-infinite $p$, if we have $2$ perceptually similar perturbation of different resolutions, the higher-resolution one will have a greater norm by a factor of $(\lambda^2)^\frac{1}{p}$. Hence, we can define scale invariant equivalents of $L^p$ norms by dividing the norm by the scale factor of the image. The scale factor can be relative to an image with area $1$, so we can use the number of pixels as $\lambda^2$. We can define scale-invariant norms like this:
 \begin{align}
-    \enVert{\vec x}_{\text{s}p} \coloneqq \frac{\enVert{\vec x}_p}{\del{H_\vec{x}W_\vec{x}}^\frac{1}{p}},
+    \enVert{\vec x}_{\text{s}p} \coloneqq \frac{\enVert{\vec x}_p}{n^\frac{1}{p}} = \del{\frac{1}{n}\sum_i \envert{x_i}^p}^\frac{1}{p},
 \end{align}
-where $H_\vec{x}$ and $W_\vec{x}$ are height and width of $\vec x$. Such norms could probably enable more informative comparison of norms between different-resolution images and different datasets, and easier hyperparameter choice for adversarial training.
+where $n$ is the number of pixels in $\vec x$. Such norms could probably enable more informative comparison of norms between different-resolution images and different datasets, and easier hyperparameter choice for adversarial training.
 
 Maybe something similar could be done about objects of different scale?
 
 ...
-\paragraph{Expectation of $p$-norms of uniformly random vectors.}
-Let $\vec x \sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}^n}$ (which is equivalent to each of its components being sampled from an uniform distribution).
-%$\vec x = \del{x_i\colon x_i\sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}}, i\in\cbr{1\bidot n}}$.
-\begin{align}
-    \E_i \vec x_i
-\end{align}
+
+\paragraph{Expectation of scale-invariant $p$-norms of high-dimensional uniformly distributed random vectors.}
+Let $\rvec x_n = \del{\rvar x_i}_{i\in\cbr{1\bidot n}}$ be a random vector with $n$ independent elements $\rvar x_i\sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}}$.
+Assuming $n$ is very large, its scale-invariant $p$-norm can\footnote{TODO: prove that the approximation is good for large $n$} be approximated with a single sample $\vec x$:
+\begin{align*}
+	\E \enVert{\rvec x}_{\text{s}p}^p &\approx \enVert{\vec x}_{\text{s}p} = \del{\frac{1}{n}\sum_i \envert{\vec{x}_\ind{i}}^p}^\frac{1}{p} &&\text{(approximation with a single sample)}\\
+	&\approx \del{\E\del{\envert{\rvec{x}_\ind{i}}^p}}^\frac{1}{p} &&\text{(IID elements, large $n$)}  \\
+	&= \del{\int_{0}^{1}\envert{\rvec{x}_\ind{i}}^p\dif x}^\frac{1}{p} \\	
+	&= \del{\frac{1}{p+1}}^\frac{1}{p} = (p+1)^{-\frac{1}{p}} \text{,}
+\end{align*}
+which is a monotonically increasing functon of $p$.
+
+
+\begin{align*}
+\E \enVert{\rvec x}_{\text{s}p}^p &\approx \enVert{\vec x}_p = \del{\frac{1}{n}\sum_i \envert{\vec{x}_\ind{i}}^p}^\frac{1}{p}
+\end{align*}
 
 \paragraph{Local $p$-norm and hiererchical norm.}
-Let $\vec k$ denote a non-negative $2$-D kernel with $\enVert{\vec k}_1=1$, eg. Gaussian cenetered at $(0,0)$. Let $\vec x$ denote an image perturbation and assume that it has a single channel for simplicity.
+Let $\vec k$ denote a non-negative $2$-D kernel with $\enVert{\vec k}_1=1$, e.g. Gaussian cenetered at $(0,0)$. Let $\vec x$ denote an image perturbation and assume that it has a single channel for simplicity.
 We can define the local $p$-norm around a pixel $(i, j)$ as
 \begin{align}
     \mathrm{LocalNorm}_{p,\vec k}(\vec x)_\ind{i,j} = \del{\envert{\vec x}^p * \vec k}_\ind{i,j}^\frac{1}{p},
