@@ -255,19 +255,24 @@ Overdependence on semantically low-level features.
 Usually, an $L^p$ distance ($d(\vec x', \vec x)=\lVert\tilde{\vec x}-\vec x\rVert_p$) is used as a distance metric for adversarial examples.
 
 \paragraph{Scale-invariant norms.}
-Let $\vec x$ denote some image (or perturbation) and $\vec x_\lambda$ the same image with dimensions scaled by $\lambda$. By having more pixels, $\vec x_\lambda$ has a greater norm. The scaled image contains $\lambda^2$ the number of pixels of the original image, and every pixel approximately repeated $\lambda^2$ times. In order to make the norm of the scaled image equal to the norm of the original image, the first though might be to divide the norm by $\lambda^2$. As the following shows, this would work for $p=1$, but not otherwise: 
+Let $\vec x$ denote some image (or perturbation) and $\vec x_\lambda$ the same image with dimensions scaled by $\lambda$. $\vec x_\lambda$ has a greater norm because it contains $\lambda^2$ the number of pixels of the original image and every pixel is approximately effectively repeated $\lambda^2$ times. In terms of $\enVert{\vec x}_p$, its norm can be approximated like this:
 \begin{align}
     \enVert{\vec x_\lambda}_p 
     &= \del{\sum_{u\in\cbr{0\bidot\lambda H}}\sum_{v\in\cbr{0\bidot\lambda W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+    &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+    &= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} \\
     &= \lambda^\frac{2}{p} \enVert{\vec x}_p \text{.}
 \end{align}
-For non-infinite $p$, if we have $2$ perceptually similar perturbation of different resolutions, the higher-resolution one will have a greater norm by a factor of $(\lambda^2)^\frac{1}{p}$. Hence, we can define scale invariant equivalents of $L^p$ norms by dividing the norm by the scale factor of the image. The scale factor can be relative to an image with area $1$, so we can use the number of pixels as $\lambda^2$. We can define scale-invariant norms like this:
+
+If there is a perturbation in $2$ different resolutions, the higher-resolution one will have a greater norm by approximately a factor of $(\lambda^2)^\frac{1}{p}$, especially if the perturbations don't have too high spatial frequencies. Hence, scale invariant equivalents of $L^p$ norms can be defined by dividing the norm by the scale factor. The scale factor can be relative to the scale of an image with area $1$. Then the total number of pixels $n$ can be used as $\lambda^2$. We can define scale-invariant norms like this:
 \begin{align}
-    \enVert{\vec x}_{\text{s}p} \coloneqq \frac{\enVert{\vec x}_p}{\del{H_\vec{x}W_\vec{x}}^\frac{1}{p}},
+    \enVert{\vec x}_{\text{s}p} \coloneqq \frac{\enVert{\vec x}_p}{n^\frac{1}{p}}, \label{eq:scale-invariant-norm}
 \end{align}
-where $H_\vec{x}$ and $W_\vec{x}$ are height and width of $\vec x$. Such norms could probably enable more informative comparison of norms between different-resolution images and different datasets, and easier hyperparameter choice for adversarial training.
+which is the same as the generalized mean \textbf{generalized mean} (also known as \textbf{power mean}), which is usually defined like this:
+\begin{align}
+    \mathrm{M}_p(\vec x) \coloneqq \del{\frac{1}{n}\sum_i \vec x_\ind{i}}^{\frac{1}{p}}. \label{eq:generalized-mean}
+\end{align}
+Such norms could probably be useful for comparison of norms between different-resolution images and different datasets, and hyperparameter choice for adversarial attacks.
 
 Maybe something similar could be done about objects of different scale?
 
