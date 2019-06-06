@@ -8,7 +8,8 @@
 \input{imports/figures}
 \input{imports/diagrams}
 \input{imports/misc}
-\usepackage[sort&compress,round,comma,authoryear]{natbib}
+%\usepackage[sort&compress,round,comma,authoryear]{natbib}
+\usepackage{natbib}
 
 
 
@@ -57,7 +58,7 @@ The distribution of a random variable $\rvar x$ is denoted $\p_\rvar{x}$. If $\r
 
 \subsection{Functions of random variables}
 
-For any function $f\in \set A\to\set B$, we will use the same symbol to denote an equivalent function that maps random variables taking values in $\set A$ to random variables taking values in $\set B$:
+For any function $f\in(\set A\to\set B)$, we will use the same symbol to denote an equivalent function that maps random variables taking values in $\set A$ to random variables taking values in $\set B$:
 \begin{align}
     \P(f(\rvar a)\in \set B_1) \coloneqq \P\del{\rvar a\in f^{-1}\sbr{\set B_1}} \text,
 \end{align}
@@ -160,9 +161,73 @@ conditional mutual information like this:
 \subsection{Minimum description length}
 
 
+\section{Gradient-based optimization}
+
+Notation, where $f\in(\set A\to\set B)$, $x\in \set A$, and $y \coloneqq f(x)$ (equivalently $f=(x\to y)$):
+\begin{align}
+    \Dif_f &= \pd{f(x)}{x} = f' &&\text{ is a function,} \\
+    \Dif_f(x) &= \pd{f(\alpha)}{\alpha}(x) = \eval{\pd{f(\alpha)}{\alpha}}_{x} = \pd{f(x)}{x} = f'(x) &&\text{ is a domain element, } \\
+    \Dif_{x\mapsto y} &= \pd{y}{x} = \pd{y}{x}(x') &&\text{ is a domain element (short), }
+\end{align}
+
+\subsection{Dependence of gradient on parametrization}
+
+Let $\vec x$ be a vector in the input space of a differentiable function $f\in\del{\R^n\to\R}$. Let $\vec y \coloneqq \frac{1}{a}\vec x$. Then $f(a\vec y)=f(\vec x)$ and
+\begin{align}
+    \pd{f\del{a\vec y}}{\vec y} = a\pd{f(a\vec y)}{a\vec y} = a\pd{f(\vec x)}{\vec x} \text{.}  \label{eq:reparametrization-grad}
+\end{align}
+
+Using equation \eqref{eq:reparametrization-grad}, we can compare the ratio of the scale of the parameter and the scale of the gradient:
+\begin{align}
+    \frac{\enVert{\pd{f\del{a\vec y}}{\vec y}}}{\enVert{\vec y}}
+    = \frac{\enVert{a\pd{f(\vec x)}{\vec x}}}{\enVert{\frac{1}{a}\vec x}}
+    = a^2\frac{\enVert{\pd{f(\vec x)}{\vec x}}}{\enVert{\vec x}} \text{.}
+\end{align}
+
+In order to make the gradient invariant to such a parametrization, it could be divided by the square of its $p$-norm (or multiplied by the square of the norm of the parameter).
+We can eaily show that the scaled gradient is independent of the parametrization:
+\begin{align}
+    \frac{\enVert{\pd{f\del{a\vec y}}{\vec y}}^{-2}\pd{f\del{a\vec y}}{\vec y}}{\enVert{\vec y}}
+    = \frac{\enVert{a\pd{f\del{\vec x}}{\vec x}}^{-2}a\pd{f\del{\vec x}}{\vec x}}{\frac{1}{a}\enVert{\vec x}}
+    = \frac{\enVert{\pd{f\del{\vec x}}{\vec x}}^{-2}\pd{f\del{\vec x}}{\vec x}}{\enVert{\vec x}} \text{.}
+\end{align}
+An issue that is introduced here is that the scaled gradient can't be $\cvec 0$. Moreover, it will grow as the unscaled gradient approaches $\cvec 0$, which is often undesirable. Alternatively, instead of dividing by the norm of its norm, the gradient could be multiplied by the square of the norm of the parameter:
+\begin{align}
+    \frac{\enVert{\vec y}^{2}\pd{f\del{a\vec y}}{\vec y}}{\enVert{\vec y}}
+    = \frac{\enVert{\frac{1}{a}\vec x}^{2}a\pd{f\del{\vec x}}{\vec x}}{\frac{1}{a}\enVert{\vec x}}
+    = \frac{\enVert{\vec x}^{2}\pd{f\del{\vec x}}{\vec x}}{\enVert{\vec x}} \text{.} \\
+\end{align}
+%!!IDEA!!: use this on each layers (or some) in backpropagation. Use L2 norm, and compensate for the number of features by using a factor making the norm scale-invariant. This should make training less dependent on the initialization scale. 
+
+The gradient update rule for $\vec x$ is:
+\begin{align}
+    \vec x' = \vec x -\eta\pd{f(\vec x)}{\vec x}^\tp \text{.}
+\end{align}
+The gradient update rule for $\vec y$ is:
+\begin{align}
+    \vec y' 
+    &= \vec y -\eta\pd{f(a\vec y)}{\vec y} ^\tp \\
+    &= \frac{1}{a}\vec x -a\eta\pd{f(\vec x)}{\vec x}^\tp &&\text{(by equation \eqref{eq:reparametrization-grad})} \\
+    &= \frac{1}{a}\del{\vec x -a^2\eta\pd{f(\vec x)}{\vec x}^\tp}\\
+    &\neq \frac{1}{a}\del{\vec x -\eta\pd{f(\vec x)}{\vec x}^\tp} = \frac{1}{a}\vec x' \text{.}
+\end{align}
+We can see that, if the parameter $\vec x$ is scaled with $\frac{1}{a}$, the optimization step needs to be
+multiplied with $\frac{1}{a^2}$. This discrepancy arises due to the property of the Jacobian being covariant to the input space transformation. Let's modify the gradient update rule with !!!inverting!!! the Jacobian:
+\begin{align}
+    \vec x' = \vec x -\eta\pd{\vec x}{f(\vec x)}^\tp \text{.}
+\end{align}
+
+\begin{align}
+    \vec y' 
+    &= \vec y - \eta\pd{\vec y}{f(a\vec y)} ^\tp \\
+    &= \frac{1}{a}\vec x -\eta\pd{\frac{1}{a}\vec x}{f(\vec x)}^\tp \\
+    &= \frac{1}{a}\vec x -\frac{1}{a}\eta\pd{\vec x}{f(\vec x)}^\tp \\
+    &= \frac{1}{a}\del{\vec x -\eta\pd{\vec x}{f(\vec x)}^\tp} = \frac{1}{a}\vec x' \text{,}
+\end{align}
+
 \section{Machine learning}
 
-\paragraph{An Occam's razor thought.} If the model (hypothesis search space) is simpler (smaller), we are more likely to find the correct hypothesis. If the correct hypothesis is complex, there will be more hypotheses consistent with the data and we are less likely to find the correct one anyway.
+\paragraph{An Occam's razor idea.} If the model (hypothesis search space) is simpler (smaller), we are more likely to find the correct hypothesis. If the correct hypothesis is complex, there will be more hypotheses consistent with the data and we are less likely to find the correct one anyway.
 
 
 \section{Uncertainty in machine learning}
@@ -200,15 +265,54 @@ Ipak, pokazano je se da se (kod nekih modela) izvanrazdiobni primjeri često mog
 
 
 
+\newpage
+.
+\newpage
 \section{Adversarial examples and generalization}
 
-Even for models that perform similar to humans on testing data, it has been shown that, by perturbing input examples even inperceptibly for humans, the models can be made to significantly change their predictions, i.e.\ make confident wrong predictions \citep{Szegedy:2013:IPNN, Goodfellow:2014:EHAE}. Such perturbed input examples are called \textbf{adversarial examples}. The existence of adversarial examples indicates that such models are probably performing well for somewhat wrong reasons, without actually \textit{understanding data}.
 
-\subsection{Defining and finding adversarial examples}
+Even though machine learning models achieve human-level performance in many tasks, when given out-of-distribution, domain-shifted, corrupted, or slightly modified examples from the training data distribution, they can often make overconfident and incorrect predictions \citep{Hendrycks:2016:BDMOODE,Ganin:2015:UDAB,Nguyen:2015:DNNEFHCPUI,Hendrycks:2019:BNNRCCP,Engstrom:2017:RTSFCST,Szegedy:2013:IPNN}. Perhaps most surprisingly, by perturbing input examples (e.g. images) even inperceptibly for humans, state-of-the-art models can be made to significantly change their predictions \citep{Szegedy:2013:IPNN, Goodfellow:2014:EHAE}. Such perturbed examples are called \textbf{adversarial examples}. The existence of adversarial examples indicates that such models are probably performing well for somewhat wrong reasons, without actually \textit{understanding data}.
 
-Let $\set X$ be the input space, and $d\in(\set X\times\set X\to \R^+)$ a \textbf{distance function} that can be used to define similarity between inputs. For each example $\vec x$ we can also define its \textbf{neighbourhood} as $B_{\epsilon} = \cbr{\vec x'\colon d(\vec x', \vec x) \leq \epsilon}$, $\epsilon$ being the maximum distance from the example.
+\subsection{Adversarial example definitions}
+A broadly accepted definition of an adversarial example is that it is an input designed to fool the model into producing an incorrect prediction.
+This can be simplified to \textbf{adversarial example definition 1}:
+\begin{quote}
+    An input for which the model produces a misprediction.
+\end{quote}
+According to this definition, the set of adversarial examples is a function of the model (hypothesis) and the ground truth. What a misprediction is should also be defined. In classification, it is misclassification, i.e. the class with the highest probability being a wrong class. Another common definition is \textbf{adversarial example definition 2}: 
+\begin{quote}
+An input close to a natural input for which the model produces a different prediction.
+\end{quote}
+According to this definition, the set of adversarial examples also depends on the set of available natural examples and a similarity or distance function (or a neighbourhood function).
 
-Ideally, the neighbourhood of an example $\vec x$ should be the set of \textit{perceptually similar} examples that all belong to the same class as $\vec x$ (their true class may be at most ambiguous), but it is hard to define such a neighbourhood. A practical and common way of defining the neighbourhood function (for images) is to let the distance function $d$ be a $L^p$ distance where $p$ is usually $\infty$ or $2$. Note that if an example is very near the true class boundary, such a neighbourhood may contain examples actually belonging to another class. 
+The second definition is useful for finding adversarial examples because we choose the neigbourhood function, but it is possible for a pair of natural examples with different ground truth labels to have overlapping neighbourhoods and to be adversarial examples of each other. 
+%E.g. in classification, natural examples that are near the decision boundary can be within neighbourhoods of examples on the other side of the decision boundary, so even the true model (hypothesis) can have adversarial examples.
+The first definition is more consistent, i.e. the true model has no adversarial examples. But then, knowing whether something is an adversarial example requires having solved the problem of finding the true model (which might be the problem we are trying to solve with the help of adversarial training).
+
+There are also some different or broader definitions of adversarial examples. Some consider out-of-distribution examples producing high-confidence predictions \citep{Gal:2018:SCIMHNAETESBNN} or, most broadly, any inputs that fool the model \citep{Brown:2018:UAE}.
+
+In the following text, adversarial examples in classification will be considered unless stated otherwise.
+
+MANIFOLD
+
+\subsection{Properties of adversarial examples.}
+
+
+
+The existence of adversarial examples shows that near almost every input, there are misclassified inputs nearby. Evidence also shows that they are rare, i.e., they can not be easily found with random search in the neighbourhood of an natural example. This initially lead to the hypothesis that existence of adversarial examples is caused by high nonlinearity of deep models and that they are located in "low-probability pockets" in the data manifold \citep{Szegedy:2013:IPNN}.
+
+However, \cite{Goodfellow:2014:EHAE} have found that it is enough to know the locally linear behaviour (e.g. gradient) with respect to the input to reliably generate adversarial examples along directions of increasing the linear approximation. They show that the direction of the perturbation matters more than the position in input space, evidencing against the low-probability pockets hypothesis. They propose the \textbf{linearity hypothesis}, according to which models are locally very linear. Thus, summing small perturbations in many elements of high-dimensional inputs can produce a large change in the prediction. \cite{Su:2017:OPAFDNN} have shown that even modifying only $1$ pixel can often be enough to cause a misclassification, indicating that models can be highly sensitive to some input elements.
+
+An interesting property of adversarial examples is that adversarial examples generated for one model are often misclassified by other models and models trained on different datasets, i.e. they generalize across models and datasets \citep{Szegedy:2013:IPNN}. This property of adversarial examples is also called \textbf{transferability}.
+\cite{Goodfellow:2014:EHAE, Tramer:2017:STAE} present some empirical evidence of transferability supporting the linearity hypothesis.
+
+
+
+\subsection{Finding adversarial examples}
+
+Let $\set X$ be the input space, and $d\in(\set X\times\set X\to \R^+)$ a \textbf{distance function} that can be used to define similarity between inputs. For each example $\vec x$, we can also define its \textbf{neighbourhood} as $B_{\epsilon}(\vec x) = \cbr{\vec x'\colon d(\vec x', \vec x) \leq \epsilon}$, $\epsilon$ being the maximum distance from the example.
+
+Ideally, the neighbourhood of an example $\vec x$ should be the set of \textit{perceptually similar} examples that all belong to the same class as $\vec x$ (their true class may be at most ambiguous), but it is hard to define such a neighbourhood (as it requires knowing the true model). A practical and common way of defining the neighbourhood function (for images) is to let the distance function $d$ be a $L^p$ distance where $p$ is usually $\infty$ or $2$. Note that if an example is very near the true class boundary, such a neighbourhood may contain examples actually belonging to another class. 
 
 Finding an adversarial example can be defined as an optimization problem of maximizing the loss with respect to the input with the constraint that the input is in the neighbourhood $B_\epsilon(\vec x)$:
 \begin{align}
@@ -217,7 +321,7 @@ Finding an adversarial example can be defined as an optimization problem of maxi
 where $y$ is either the true label or the predicted label. Let $\hat{h}(\vec x) = \argmax_{y'} h(\vec x')_\ind{y'}$ denote the function that assigns the label with the highest probability to an input.
 An objective can also be to find the $\tilde{\vec x}$ closest to $\vec x$ such that the classifier misclassifies it \citep{Moosavi-Dezfooli:2016:DFSAMFDNN}:
 \begin{align}
-    \tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x) \neq y} d(\vec x', \vec x). \label{eq:untargeted-closest-attack}
+    \tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x') \neq y} d(\vec x', \vec x). \label{eq:untargeted-closest-attack}
 \end{align}
 
 The described objectives, where it only matters that the adversarial example is misclassified, are objectives for \textbf{untargeted adversarial attacks}. There are also \textbf{targeted adversarial attacks}, where the objective is to create an adversarial example such that the model classifies it as some desired class. Targeted attack objectives corresponding to equations \eqref{eq:untargeted-loss-attack} and \eqref{eq:untargeted-closest-attack} are:
@@ -226,7 +330,7 @@ The described objectives, where it only matters that the adversarial example is 
 \end{align}
 and
 \begin{align}
-    \tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x) = y_\text{t}} d(\vec x', \vec x), \label{eq:targeted-closest-attack}
+    \tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x') = y_\text{t}} d(\vec x', \vec x), \label{eq:targeted-closest-attack}
 \end{align}
 where $y_\text{t}$ denotes the adversarial target label.
 
@@ -237,45 +341,60 @@ Adversarial examples can also be generated without knowledge of the true label. 
 \end{align}
 where $D$ is some non-negative function that represents distance between distributions. Other (untargeted) attacks can also produce virtual adversarial examples by using the predicted label $\hat{h}(\vec x)$ instead of the true label in the loss.
 
+\subsection{Improving adversarial robustness.} There are different approaches (\textit{defenses}) trying to improve adversarial robustness, many of which have been shown to be ineffective on improved attacks \citep{Carlini:2017:AEANEDBTM,Athalye:2018:OGGFSS,Uesato:2018:ARDEAWA,Carlini:2017:TERNN}. A broad overview of many attacks can be found in \cite{Serban:2018:AECCP}. Some approaches are based on designing models which are less sensitive to small input perturbations with hard or soft constraints \cite{}, TODO
+Currently, the best way to achieve \textbf{robustness} is adversarial training \citep{Goodfellow:2014:EHAE,Madry:2017:TDLMRAA}, where the model is trained to make correct predictions on adversarial examples. 
+
+Nevertheless, empirical results show that improving robustness is a problem that requires more capacity and causes a reduction of performance of the model on natural data compared to traiing with natural examples only \citep{Madry:2017:TDLMRAA,Tsipras:2018:RMBOA} (atleast for deep models). All this will be discussed more thoroughly in the following sections.
+
+\subsection{Adversarial examples and generalization}
+
+
 \subsubsection{Transferability}
 
-Common (naturally trained) CV models (algorithms) are biased similarly with respect to having adversarial examples -- they are nonrobust in similar ways. 
+Common (naturally trained) CV models (algorithms) are biased similarly with respect to having adversarial examples -- they are non-robust in similar ways. 
 
 Can this bias be easily overcome? Unfortunately, there seems not to be much evidence indicating this.
 
 Overdependence on semantically low-level features.
 
+
+\subsubsection{Robustness}
+
+\cite{Athalye:2018:OGGFSS} state that, if there are classes that are very similar, using targeted attacks for robustness evaluation can give more meaningful results. 
+
+stronger attack targeted, stronger evaluation untargeted
+
 \subsubsection{Adversarial training}
 
 \cite{Kurakin:2016:AMLS} note that by using the true label in the loss in untargeted attacks ($y$ in equation \eqref{eq:untargeted-loss-attack}) can cause
 
+
+\newpage
+.
+\newpage
 \subsubsection{Distance metrics for images}
 
 Usually, an $L^p$ distance ($d(\vec x', \vec x)=\lVert\tilde{\vec x}-\vec x\rVert_p$) is used as a distance metric for adversarial examples.
 
 \paragraph{Scale-invariant norms.}
 Let $\vec x$ denote some image (or perturbation) and $\vec x_\lambda$ the same image with dimensions scaled by $\lambda$. $\vec x_\lambda$ has a greater norm because it contains $\lambda^2$ the number of pixels of the original image and every pixel is approximately effectively repeated $\lambda^2$ times. In terms of $\enVert{\vec x}_p$, its norm can be approximated like this:
-\begin{align}
+\begin{align*}
     \enVert{\vec x_\lambda}_p 
-    &= \del{\sum_{u\in\cbr{0\bidot\lambda H}}\sum_{v\in\cbr{0\bidot\lambda W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &= \del{\lambda^2\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+    &= \del{\sum_{u\in\cbr{0\bidot\lambda H}}\sum_{v\in\cbr{0\bidot\lambda W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} && \text{(norm definition)} \\
+    &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} && \text{($\lambda^2$ element copies)} \\
     &= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &= \lambda^\frac{2}{p} \enVert{\vec x}_p \text{.}
-\end{align}
+    &= \lambda^\frac{2}{p} \enVert{\vec x}_p \text{.} && \text{(norm definition)}
+\end{align*}
 
-If there is a perturbation in $2$ different resolutions, the higher-resolution one will have a greater norm by approximately a factor of $(\lambda^2)^\frac{1}{p}$, especially if the perturbations don't have too high spatial frequencies. Hence, scale invariant equivalents of $L^p$ norms can be defined by dividing the norm by the scale factor. The scale factor can be relative to the scale of an image with area $1$. Then the total number of pixels $n$ can be used as $\lambda^2$. We can define scale-invariant norms like this:
+If there is a perturbation in $2$ different resolutions, the higher-resolution one will have a greater norm by approximately a factor of $(\lambda^2)^\frac{1}{p}$, especially if the perturbations don't have too high spatial frequencies. Hence, scale invariant equivalents of $L^p$ norms can be defined by dividing the norm by the scale factor. If we choose the scale factor to be relative to the scale of an image with area $1$, $\lambda^2$ is $n$, the total number of pixels. 
+
+We can define \textbf{scale-invariant norms} like this:
 \begin{align}
-    \enVert{\vec x}_{\text{s}p} \coloneqq \frac{\enVert{\vec x}_p}{n^\frac{1}{p}}, \label{eq:scale-invariant-norm}
+    \mathrm{m}_p(\vec x) \coloneqq n^{-\frac{1}{p}}\enVert{\vec x}_p, \label{eq:scale-invariant-norm}
 \end{align}
-which is the same as the generalized mean \textbf{generalized mean} (also known as \textbf{power mean}), which is usually defined like this:
+This can also be expressed as the \textbf{generalized mean} $\mathrm{M}_p$ (also known as \textbf{power mean}) of the elementwise absolute value:
 \begin{align}
-    \enVert{\vec x}_{\text{s}p} \coloneqq \frac{\enVert{\vec x}_p}{n^\frac{1}{p}} = \del{\frac{1}{n}\sum_i \envert{x_i}^p}^\frac{1}{p},
-\end{align}
-where $n$ is the number of pixels in $\vec x$. Such norms could probably enable more informative comparison of norms between different-resolution images and different datasets, and easier hyperparameter choice for adversarial training.
-    \mathrm{M}_p(\vec x) \coloneqq \del{\frac{1}{n}\sum_i \vec x_\ind{i}}^{\frac{1}{p}}. \label{eq:generalized-mean}
+    \mathrm{m}_p(\vec x) = \mathrm{M}_p(\envert{\vec x}) \coloneqq \del{\frac{1}{n}\sum_i  \envert{\vec x_\ind{i}}^p}^{\frac{1}{p}}. \label{eq:generalized-mean}
 \end{align}
 Such norms could probably be useful for comparison of norms between different-resolution images and different datasets, and hyperparameter choice for adversarial attacks.
 
@@ -283,21 +402,46 @@ Maybe something similar could be done about objects of different scale?
 
 ...
 
-\paragraph{Expectation of scale-invariant $p$-norms of high-dimensional uniformly distributed random vectors.}
-Let $\rvec x_n = \del{\rvar x_i}_{i\in\cbr{1\bidot n}}$ be a random vector with $n$ independent elements $\rvar x_i\sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}}$.
-Assuming $n$ is very large, its scale-invariant $p$-norm can\footnote{TODO: prove that the approximation is good for large $n$} be approximated with a single sample $\vec x$:
+\paragraph{Expectation of scale-invariant norms uniformly distributed random vectors.}
+Let $\rvec x_n$ be a random vector with $n$ independent elements ${\rvec x_n}_\ind{i}\sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}}$.
+
+An easy special case is when $p=1$:
 \begin{align*}
-	\E \enVert{\rvec x}_{\text{s}p}^p &\approx \enVert{\vec x}_{\text{s}p} = \del{\frac{1}{n}\sum_i \envert{\vec{x}_\ind{i}}^p}^\frac{1}{p} &&\text{(approximation with a single sample)}\\
-	&\approx \del{\E\del{\envert{\rvec{x}_\ind{i}}^p}}^\frac{1}{p} &&\text{(IID elements, large $n$)}  \\
-	&= \del{\int_{0}^{1}\envert{\rvec{x}_\ind{i}}^p\dif x}^\frac{1}{p} \\	
-	&= \del{\frac{1}{p+1}}^\frac{1}{p} = (p+1)^{-\frac{1}{p}} \text{,}
+    \E\sbr{\mathrm{m}_1(\rvec x_n)}
+	= \E\sbr{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}}
+	= \E\sbr{\envert{{\rvec x_n}_\ind{i}}}  
+	= \frac{\epsilon}{2} \text{.}
 \end{align*}
-which is a monotonically increasing functon of $p$.
+
+For very large $n$, we can approximate it like this:
+\begin{align*}
+	\lim_{n\to\infty} \E \sbr{\mathrm{m}_p(\rvec x_n)}
+	&= \E\sbr{\lim_{n\to\infty}\del{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}^p}^\frac{1}{p}} &&\text{(dominated convergence)} \\
+	&= \E\sbr{\E\sbr{\envert{{\rvec x_n}_\ind{0}}^p}^\frac{1}{p}} &&\text{(IID elements)}  \\
+	&= \E\sbr{\envert{{\rvec x_n}_\ind{0}}^p}^\frac{1}{p} &&\text{(redundant expectation)}  \\
+	&= \frac{1}{2\epsilon} \del{\int_{-\epsilon}^{\epsilon}\envert{x}^p\dif x}^\frac{1}{p} &&\text{(definition of expectation)}  \\	
+	&= \frac{1}{\epsilon}\del{\int_{0}^{\epsilon}x^p\dif x}^\frac{1}{p} &&\text{(absolute value symmetry)}  \\	
+	&= \frac{1}{\epsilon}\del{\frac{\epsilon^{p+1}}{p+1}}^\frac{1}{p} \text{.} \numberthis\label{eq:power-norm-n-infinity}
+\end{align*}
+Specially, for $\epsilon=1$, it evaluates to 
+\begin{align}
+	 \lim_{n\to\infty} \E \sbr{\mathrm{m}_p(\rvec x_n)} = (p+1)^{-\frac{1}{p}} \text{.}
+\end{align}
+
+TODO: Show that \eqref{eq:power-norm-n-infinity} is the upper bound if $p>1$ and the lower bound if $p<1$.
+
+By the power mean inequality, which can be proved by applying the Jensen inequality, $\mathrm{m}_p(\rvec x)$ is monotonically increasing in $p$ (for $p>0$).
 
 
+For easier analysis, let's first consider a special case: ${\rvec x_n}_\ind{i}\sim\mathcal{U}\del{\intcc{0,1}}$.
 \begin{align*}
-\E \enVert{\rvec x}_{\text{s}p}^p &\approx \enVert{\vec x}_p = \del{\frac{1}{n}\sum_i \envert{\vec{x}_\ind{i}}^p}^\frac{1}{p}
+	\E \sbr{\mathrm{m}_p(\rvec x_n)}
+	&= \E\sbr{\del{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}^p}^\frac{1}{p}}  \\
+	% not good (no dependence on n): &\approx \E\sbr{\del{\frac{1}{2p}}^\frac{1}{p}}  \\
+	&= \idotsint_{\intcc{0,1}^n} \del{\frac{1}{n}\sum_i \envert{\vec x_\ind{i}}^p}^\frac{1}{p} \dif\vec x  \\
+	&= n^{-\frac{1}{p}}\idotsint_{\intcc{0,1}^n} \del{\sum_i \envert{\vec x_\ind{i}}^p}^\frac{1}{p} \dif\vec x  
 \end{align*}
+
 
 \paragraph{Local $p$-norm and hiererchical norm.}
 Let $\vec k$ denote a non-negative $2$-D kernel with $\enVert{\vec k}_1=1$, e.g. Gaussian cenetered at $(0,0)$. Let $\vec x$ denote an image perturbation and assume that it has a single channel for simplicity.
@@ -433,7 +577,6 @@ Neki pristup ise mogu kombinirati.
 
 Pretpostavljamo duboki diskriminativni model $h(\vec x;\vec\theta)$ s parametrima $\vec\theta$ koji ulaz $\vec x$ preslikava u vektor $\vec y$ koji predstavlja izlaznu razdiobu  $\p(\rvar y\mid \vec x, \vec\theta)$.
 
-
 \subsubsection{Korištenje autoenkodera za prepoznavanje izvanrazdiobnih primjera}
 
 \cite{Sabokrou:2018:ALOCCND} za otkrivanje anomalija u slici predlažu korištenje autoenkodera (s jako velikom skrivenom reprezentacijom) kojemu se kod učenja kao ulaz daje zašumljena slika. Uz autoenkoder se dodaje diiskriminator koji se uči a razlikuje izlaz autoenkodera od stvarnih primjera za učenje. Kao gubitak se koristi težinski zbroj kvadratne rekonstrukcijske pogreške i suparničkog gubitka. Kao primjeri se koriste mali izrazani dijelovi većih slika. Za prepoznavanje anomalija koristi se izlaz diskriminatora za rekonstruirani primjer.
@@ -489,9 +632,8 @@ Rekonstrukciju ulazne slike možemo dobiti ako koristimo neki model koji je bije
 
 Kombinaciju \cite{Lee:2017:TCCCDOOD} i korištenja izvanrazdiobnih primjera u učenju.
 
-
 \bibliography{bibliography}
-\bibliographystyle{fer} 
-
+\bibliographystyle{plainnat} 
+%\bibliographystyle{ieeetr}
 
 \end{document}

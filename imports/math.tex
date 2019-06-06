@@ -1,24 +1,29 @@
+% ULTIMATH
+
+
 % redefinition of left and right to make spacing consistent
+% https://tex.stackexchange.com/questions/2607/spacing-around-left-and-right/2610
 \let\originalleft\left
 \let\originalright\right
-\def\left#1{\mathopen{}\originalleft#1}
-\def\right#1{\originalright#1\mathclose{}}
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
+\renewcommand{\right}{\aftergroup\egroup\originalright}
 
 \usepackage{amsmath}
 \usepackage{amssymb}  % loads amsfonts
 
+% adding equation number inside align*
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
 \usepackage{mathtools}  % \coloneqq, smashoperator
 %\usepackage{bm}
 %\usepackage[utopia]{mathdesign}
-\usepackage[OMLmathsfit]{isomath}  % \DeclareMathAlphabet ...
-
-\usepackage{upgreek}
 
 %\usepackage{commath}  % calculus, perentheses
 % https://tex.stackexchange.com/questions/135944/commath-and-ifinner/135985#135985
-%
-\DeclareMathOperator{\dif}{d \!}
-\DeclareMathOperator{\Dif}{D \!}
+% instead of commath:
+%% begin commath-fixed
+\DeclareMathOperator{\dif}{d\!}
+\DeclareMathOperator{\Dif}{D\!}
 
 \makeatletter
 \newcommand{\spx}[1]{%
@@ -53,22 +58,17 @@
 	\left#1#4\right#2\fi
 }
 \newcommand{\del}[2][-1]{\genericdel(){#1}{#2}}
-\newcommand{\set}[2][-1]{\genericdel\{\}{#1}{#2}}
-\let\cbr\set
-\let\event\set
+\newcommand{\cbr}[2][-1]{\genericdel\{\}{#1}{#2}}
+\let\set\cbr
+\let\event\cbr
 \newcommand{\sbr}[2][-1]{\genericdel[]{#1}{#2}}
-\let\intoo\del
-\let\intcc\sbr
-\newcommand{\intoc}[2][-1]{\genericdel(]{#1}{#2}}
-\newcommand{\intco}[2][-1]{\genericdel[){#1}{#2}}
+\newcommand{\intoo}[2][-1]{\mathinner{\genericdel(){#1}{#2}}}
+\newcommand{\intcc}[2][-1]{\mathinner{\genericdel[]{#1}{#2}}}
+\newcommand{\intoc}[2][-1]{\mathinner{\genericdel(]{#1}{#2}}}
+\newcommand{\intco}[2][-1]{\mathinner{\genericdel[){#1}{#2}}}
 \newcommand{\eval}[2][-1]{\genericdel.|{#1}{#2}}
 \newcommand{\envert}[2][-1]{\genericdel||{#1}{#2}}
 \let\abs\envert
-\newcommand{\sVert}[1][0]{%
-	\ifcase#1\relax
-	\rvert\or\bigr|\or\Bigr|\or\biggr|\or\Biggr
-	\fi
-}
 \newcommand{\enVert}[2][-1]{\genericdel\|\|{#1}{#2}}
 \let\norm\enVert
 \newcommand{\fullfunction}[5]{%
@@ -77,22 +77,23 @@
 		#4 &{}\longmapsto{} #5
 	\end{array}
 }
-%
-%
-
+% parentheses from commath redefined to improve spacing because left and right were redefined, \midmid, new \tilde and \hat that don't make parentheses bigger
+\newcommand{\ind}[1]{{\sbr{#1}}}
+%% end commath-fixed
 
 \usepackage{stmaryrd}  % \llbracket for \rrbracket, ...
 
-
-%\usepackage[croatian]{babel}		% teorem
 %\newtheorem{definition}{Definicija}[section]
 %\newtheorem{theorem}{Teorem}[section]
 %\newtheorem{corollary}{Korolar}[theorem]
 
+% More consistent fonts
+\usepackage[OMLmathsfit]{isomath}  % \DeclareMathAlphabet ...
+\usepackage{upgreek}
+
 \DeclareMathAlphabet{\mathbbmsl}{U}{bbm}{m}{sl}
 \DeclareMathAlphabet{\mathbbmb}{U}{bbm}{b}{it}
 \DeclareMathAlphabet{\mathbbmssit}{U}{bbmss}{m}{it}
-
 
 % common set?, distribution
 \newcommand{\commset}[1]{\mathbbmb{#1}}
@@ -112,10 +113,7 @@
 \newcommand{\cvec}[1]{\mathbf{#1}}
 \newcommand{\cset}[1]{\mathbb{#1}}
 
-% random variable
-%\newcommand\mathmakebox[3][1em][c]{\mathpalette\mathmakeboxinternal[#1][#2]{#3}}
-%\newcommand\mathmakeboxinternal[3][1em][c]{\makebox[#1][#2]{$\mathsurround=0pt{#3}$}}
-\usepackage{etex}
+% underlining (for random variables)
 \newcommand{\nunder}[2][5]{\mathrlap{\mkern\the\numexpr#1/2mu\relax\underline{\phantom{\mathrm{#2}\mkern-#1mu}}}\mathrm{#2}}
 \newcommand{\subline}[2][n]{%
     \makebox[\widthof{$#2$}/2]{}\mathclap{#2}%
@@ -124,6 +122,9 @@
     }}}%
     \makebox[\widthof{$#2$}/2]{}%
 }
+
+% random variables (Dutch notation - J. Hemelrijk, underlining random variables)
+% https://lingpipe-blog.com/2009/10/13/whats-wrong-with-probability-notation/
 \newcommand{\rvarstyle}[1]{{{\subline[i]{#1}}}}
 \newcommand{\rvar}[1]{\rvarstyle{#1}}
 \newcommand{\rvec}[1]{\rvarstyle{\vec{#1}}}
@@ -147,11 +148,12 @@
 \DeclareMathOperator{\modfunc}{mod}
 
 % operators
+\DeclareMathOperator{\vecfunc}{vec}
 \DeclareMathOperator*{\argmin}{arg\,min} % thin space
 \DeclareMathOperator*{\argmax}{arg\,max}
 \let\P\relax
-\newcommand{\P}{\mathrm{P}}
-\newcommand{\p}{\mathrm{p}}
+\DeclareMathOperator{\P}{P}
+\DeclareMathOperator{\p}{\mathrm{p}}
 \DeclareMathOperator*{\E}{\mathrm{I\kern-.282em E}}
 \DeclareMathOperator*{\D}{\mathrm{I\kern-.282em D}}
 \DeclareMathOperator*{\Cov}{\mathrm{Cov}}
@@ -160,14 +162,12 @@
 \newcommand{\h}{\mathrm{h}}
 \newcommand{\I}{\mathrm{I}}
 \newcommand{\Dist}{\mathrm{D}}  % D is for dispersion
-%\renewcommand{\dif}{\mathrm{d}}
 
+% graphs
 \newcommand{\pa}{\mathrm{pa}}
 \newcommand{\ch}{\mathrm{ch}}
 \newcommand{\pred}{\mathrm{pred}}
 \renewcommand{\succ}{\mathrm{succ}}
-
-\newcommand{\vecfunc}{\mathrm{vec}}
 
 % bracket operators
 %\newcommand{\enangle}[1]{\mathinner{\left\langle{#1}\right\rangle}}
@@ -175,18 +175,11 @@
 \newcommand{\enbbracket}[1]{{\mathinner{\left\llbracket{#1}\right\rrbracket}}}
 \newcommand{\braket}[2]{\enangle{{#1}\middle|{#2}}}
 
-% parentheses from commath redefined to improve spacing because left and right were redefined, \midmid, new \tilde and \hat that don't make parentheses bigger
-\renewcommand{\del}[1]{\left(#1\right)}
-\renewcommand{\sbr}[1]{\left[#1\right]}
-\renewcommand{\cbr}[1]{\left\{#1\right\}}
-\renewcommand{\intoo}[1]{\mathinner{\del{#1}}}
-\renewcommand{\intcc}[1]{\mathinner{\sbr{#1}}}
-\renewcommand{\intco}[1]{\mathinner{\left[#1\right)}}
-\renewcommand{\intoc}[1]{\mathinner{\left(#1\right]}}
-\newcommand{\ind}[1]{{\sbr{#1}}}
 %\let\mid\relax
 %\newcommand{\mid}{\;|\;}  % spaces around not reduced in index
 \newcommand{\midmid}{\;\middle|\;}
+
+% hat and tilde
 \let\oldhat\hat
 \renewcommand{\hat}[1]{\vphantom{#1}\smash[t]{\oldhat{#1}}}
 \let\oldtilde\tilde
@@ -208,6 +201,7 @@
 
 \newcommand\concat{\mathbin{+\mkern-10mu+}}
 
+% machine learning evaluation
 \newcommand{\TP}{\mathit{TP}}
 \newcommand{\FP}{\mathit{FP}}
 \newcommand{\TN}{\mathit{TN}}
