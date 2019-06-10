@@ -348,13 +348,13 @@ A useful assumption in many machine learning problems is that the distribution o
 One of the goals of generative models is often to model the data manifold with a lower-dimensional representation. This assumption provides useful intuition for generative models, dimensionality reduction, the understanding of adversarial examples, and adversarial defenses.
 
 
-\subsection{Properties of adversarial examples.}
+\subsection{Properties of adversarial examples}
 
-Here some properties, phenomena and hypotheses regarding adversarial examples are described. A broader overview can be found in e.g. \citet{Serban:2018:AECCP}.
+Here some properties, phenomena and hypotheses regarding adversarial examples are described, some of which are more or less supported by evidence. Besides hypotheses on the existence and properties of adversarial examples described here, there is also the quite predictive and well suppoted by evidence \textit{non-robust features} hypothesis described in section \ref{sec:robustness-generalization}, which might not be in contradiction with most of the hypotheses presented here. A broader overview can be found in e.g. \citet{Serban:2018:AECCP}.
 
 \paragraph{Rareness and closeness to natural examples.} The existence of adversarial examples shows that near almost every input, there are misclassified inputs nearby. Evidence also shows that they are rare, i.e., they can not be easily found with random search in the neighbourhood of an natural example. This initially lead to the hypothesis that existence of adversarial examples is caused by high nonlinearity of deep models and that they are located in "low-probability pockets" in the data manifold \citep{Szegedy:2013:IPNN}. 
 
-\paragraph{Local linearity.} However, \citet{Goodfellow:2014:EHAE} have found that it is usually enough to know the locally linear behaviour (gradient with respect to the input) to reliably generate adversarial examples along directions of increasing the linear approximation. This is visualized in figure \ref{fig:fgsm-adversarial-example}. They show that the direction of the perturbation matters more than the position in input space, evidencing against the low-probability pockets hypothesis. They suggest the \textbf{linearity hypothesis} whereby high local linearity of models accounts for the existence of adversarial examples. Summing small perturbations in many elements of high-dimensional inputs can produce a large change in the prediction. \citet{Su:2017:OPAFDNN} have shown that even modifying only $1$ pixel can often be enough to cause a misclassification, indicating that models can be highly sensitive to some input elements. \citet{Tabacof:2016:ESAI} have found more evidence that adversarial examples span many-dimensional subsets in the input space.
+\paragraph{Local linearity.} However, \citet{Goodfellow:2014:EHAE} have found that it is usually enough to know the locally linear behaviour (gradient with respect to the input) to reliably generate adversarial examples along directions of increasing the linear approximation. This is visualized in figure \ref{fig:fgsm-adversarial-example}. They show that the direction of the perturbation matters more than the position in input space, evidencing against the low-probability pockets hypothesis. They suggest the \textit{linearity hypothesis} whereby high local linearity of models accounts for the existence of adversarial examples. Summing small perturbations in many elements of high-dimensional inputs can produce a large change in the prediction. \citet{Su:2017:OPAFDNN} have shown that even modifying only $1$ pixel can often be enough to cause a misclassification, indicating that models can be highly sensitive to some input elements. \citet{Tabacof:2016:ESAI} have found more evidence that adversarial examples span many-dimensional subsets in the input space.
 
 
 \begin{figure}
@@ -429,7 +429,7 @@ Qualitative assesment of adversarial examples of robust classifiers suggest that
 	\label{fig:li-gfz-adversarial-examples-mnist}
 \end{figure}
 
-Further interesting phenomena related to the nature of adversarial examples, adversarial robustness and generalization will be discussed in section \ref{sec:robustness-generalization}.
+Further interesting phenomena and hypotheses related to the nature of adversarial examples, adversarial robustness and generalization will be discussed in section \ref{sec:robustness-generalization}.
 
 
 \subsection{Finding adversarial examples} \label{sec:finding-adversarial-examples}
@@ -499,7 +499,9 @@ There are different approaches (\textit{defenses}) trying to improve adversarial
 
 A broad overview of many defenses can be found in \citet{Serban:2018:AECCP}. To give a few examples, some approaches use generative models to approximately project inputs to a learned data manifold (e.g. \citet{Samangouei:2018:DGPCAAAUGM}), some approaches are based on limiting the Lipschitz constant of the model to limit sensitivity to small input perturbations by regularization and model modification (e.g. \citet{Qian:2018:L2NNN}), some research is looking into ways of guaranteeing robustness (e.g. \citet{Cohen:2019:CARRS}).
 
-\paragraph{Adversarial training.} The only defense currently believed to be effective according to \citet{Athalye:2018:OGGFSS} is adversarial training \citep{Goodfellow:2014:EHAE} with a strong attack \citep{Madry:2017:TDLMRAA}, where the model is trained on adversarial examples as well as natural examples.
+\subsubsection{Adversarial training and empirical adversarial risk}
+
+The only defense currently believed to be effective according to \citet{Athalye:2018:OGGFSS} is adversarial training \citep{Goodfellow:2014:EHAE} with a strong attack \citep{Madry:2017:TDLMRAA}, where the model is trained on adversarial examples as well as natural examples.
 
 \cite{Madry:2017:TDLMRAA} define what can be called \textit{empirical adversarial risk} by allowing the worst-case attack to modify each the input in the empirical risk expression:
 \begin{align}
@@ -568,7 +570,7 @@ In another experiment, they try to remove non-robust-features from inputs with t
 
 \citet{Stutz:2018:DARG} challenge the hypothesis that there is a trade-off between robustness and generalization. They hypothesize that most adversarial examples come from directions orthogonal to the learned class manifolds and that training adversarial examples (as per a definition similar to definition \ref{def:ae-consistent}) limited to the known or learned class manifolds (on-manifold adversarial examples) can improve generalization. They conduct experiments with a synthetic dataset with known class-invariant transformations and datasets with small images that support the hypothesis that generalization can be improved with adversarial training with on-manifold adversarial examples.
 
-Class manifolds, on- and off-manifold adversarial examples are illustrated in figure \ref{fig:stutz-illustration}.
+Class manifolds to which adversarial examples are restrited and on-manifold and off-manifold adversarial examples are illustrated in figure \ref{fig:stutz-illustration}.
 
 \begin{figure}
 	\begin{center}
@@ -578,11 +580,9 @@ Class manifolds, on- and off-manifold adversarial examples are illustrated in fi
 	\label{fig:stutz-illustration}
 \end{figure}
 
-In one of the experiments they construct a synthetic dataset with a known manifold (geometric transformations of letters) in order to be able to generate exactly on-manifold adversarial examples by modifying parameters of the geometric transformations. With this dataset, they succeed in improving generalization and on-manifold robustness\footnote{By the authors' definition of an adversarial example, which is similar to the consistent definition (definition \ref{def:ae-consistent}), except for that there is no closeness constraint, making it equivalent to the definition of a misclassified example, on-manifold robustness essentially boils down to generalization.} with adversarial training.
+In one of the experiments \citet{Stutz:2018:DARG} construct a synthetic dataset with a known manifold (geometric transformations of letters) in order to be able to generate exactly on-manifold adversarial examples by modifying parameters of the geometric transformations. With this dataset, they succeed in improving generalization and on-manifold robustness\footnote{By the authors' definition of an adversarial example, which is similar to the consistent definition (definition \ref{def:ae-consistent}), except for that there is no closeness constraint, making it equivalent to the definition of a misclassified example, on-manifold robustness essentially boils down to generalization.} with adversarial training.
 
 In other experiments they use EMNIST \citep{Cohen:2017:EMNIST}, FashionMNIST \citep{Xiao:2017:FMNIDBMLA} and CelebA \citep{Liu:2015:DLFAW}. In order to better approximate class manifolds and disable leaving the manifold of a class when an adversarial example is generated for adversarial training, they first train one variational autoencoder (VAE-GAN) per class. They perform training and evaluation analogously to the experiment with synthetic data by allowing the attack to perturb the latent representation of the autoencoder corresponding to the correct class. They measure positive correlation between robustness to on-manifold adversarial examples and generalization. They observe worse quality of on-manifold adversarial examples for the more complex dataset CelebA due to worse approximation quality of their VAE-GAN-s.
-
-The results from \cite{Stutz:2018:DARG} suggest that adversarial robustness and generalization are not contradictory objectives, but that it is still 
 
 
 \subsection{Conclusion}
