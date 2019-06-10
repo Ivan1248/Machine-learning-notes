@@ -1,5 +1,11 @@
 \usepackage[T1]{fontenc}  % accented characters, copy from pdf, ...
 
+% theorem, definition
+\usepackage[english]{babel}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+
+
 \raggedright						% bez desnog poravnavanja
 \raggedbottom
 \usepackage{caption}
@@ -50,4 +56,8 @@
 \newenvironment{solidenumerate}
 	{\begin{enumerate}[topsep=0pt,itemsep=0pt,partopsep=0pt]}
 	{\end{enumerate}}
+
+\newenvironment{soliditemize}
+{\begin{itemize}[topsep=0pt,itemsep=0pt,partopsep=0pt]}
+	{\end{itemize}}
 
