@@ -1,5 +1,4 @@
-%\documentclass{article}
-\documentclass[twocolumn]{article}
+\documentclass{article}
 \usepackage[utf8]{inputenc}
 \input{imports/font}
 \input{imports/text}
@@ -11,9 +10,6 @@
 \input{imports/misc}
 %\usepackage[sort&compress,round,comma,authoryear]{natbib}
 \usepackage{natbib}
-
-
-
 
 \title{Machine learning notes}
 \author{}
@@ -37,8 +33,7 @@
 \printunsrtglossary[type=symbols,style=supergroup,title={Notation}]
 \endgroup
 
-
-
+\part{Introduction}
 
 \section{Probability}
 
@@ -138,7 +133,7 @@ Mutual information can also be expressed as relative entropy:
 
 \subsubsection{Conditional measures}
 
-Conditional counterparts of the information-theoretic measures have random variables in the condition-part of the expression that represents the argument of a measure. e.g.\ \textbf{Conditional entropy} is defined like this:
+Conditional counterparts of the information-theoretic measures have random variables in the condition-part of the expression that represents the argument of a measure. \textbf{Conditional entropy} is defined like this:
 \begin{align}
     \H(\rvar x\mid\rvar y) &= \E_{\rvar y}\H(\rvar x\mid y) \text.
 \end{align}
@@ -231,6 +226,12 @@ multiplied with $\frac{1}{a^2}$. This discrepancy arises due to the property of 
 \paragraph{An Occam's razor idea.} If the model (hypothesis search space) is simpler (smaller), we are more likely to find the correct hypothesis. If the correct hypothesis is complex, there will be more hypotheses consistent with the data and we are less likely to find the correct one anyway.
 
 
+
+
+\part{Uncertainty}
+
+
+
 \section{Uncertainty in machine learning}
 
 \subsection{Expressing uncertainty}
@@ -269,6 +270,14 @@ Ipak, pokazano je se da se (kod nekih modela) izvanrazdiobni primjeri često mog
 \newpage.\newpage.\newpage
 %.
 \newpage
+
+
+
+
+\part{Generalization and robustness}
+
+
+
 \section{Interplay of adversarial robustness and generalization in deep convolutional models}
 
 Although common machine learning algorithms achieve human-level performance in many tasks, when given out-of-distribution, domain-shifted, corrupted or slightly modified examples from the training data distribution, they can often make overconfident and incorrect predictions \citep{Hendrycks:2016:BDMOODE,Ganin:2015:UDAB,Nguyen:2015:DNNEFHCPUI,Hendrycks:2019:BNNRCCP,Engstrom:2017:RTSFCST,Szegedy:2013:IPNN}. Perhaps most surprisingly, by perturbing input examples (e.g. images) even inperceptibly for humans, common state-of-the-art algorithms can be made to significantly change their predictions both for examples from and outside of the training data distribution \citep{Szegedy:2013:IPNN, Goodfellow:2014:EHAE}. Such perturbed examples are called \textit{adversarial examples}. The existence of adversarial examples indicates that such algorithms are probably performing well for somewhat wrong reasons, without actually \textit{understanding data}.
@@ -283,7 +292,7 @@ A brief overview over a subset of the research on adversarial examples will be g
 \subsection{Definitions and notation}
 
 To prevent some ambiguities, we define some basic machine learning concepts as they will be used here:
-\begin{soliditemize}
+\begin{itemize}
 	\item Hypothesis -- a mapping from inputs to predictions. A hypothesis will be denoted $h(\vec x)\coloneqq h(\vec x;\vec\theta)$, where $\vec x\in\set X$ is an input vector and $\vec\theta$ fixed model parameters. For discriminative models $h(\vec x)=\p(\rvar y\mid\vec x)$. $\rvar y\mid\vec x$ a conditioned random variable, short for $\rvar y\mid\rvec x=\vec x$. Random variables are underlined.
 	\item Model -- a set of hypotheses $\set H$ or a function $h$ defined up to some free parameters $\vec\theta$: $\set H=\cbr{\vec x\mapsto h(\vec x;\vec\theta)}_{\vec\theta}$.
 	\item Machine learning algorithm (short: algorithm) -- usually a model together with inductive bias and an objective function. %, and an optimization procedure.
@@ -295,11 +304,11 @@ To prevent some ambiguities, we define some basic machine learning concepts as t
 		R(h,\distrib D)\coloneqq\E_{(\vec x,y)\sim\distrib D}L(y, h(\vec x)) \text{,}
 	\end{align} where $L$ is the loss function, which is usually proportional to negative log-likelihood $\p(y\mid\vec x,\vec\theta)$.
 	\item Empirical risk -- the error on the empirical distribution $p_{\set D}$ (a uniform distribution over the set of observed examples $\set D$): $R_\text{E}(h,\set D)\coloneqq R(h,p_{\set D})$. The objective of a machine learning algorithm is to minimize a combination of empirical risk and structural risk, which usually represents the prior hypothesis probability of the hypothesis (parameters) $\p(\vec\theta)$.
-\end{soliditemize}
+\end{itemize}
 
 
 Here are some common terms related to adversarial examples defined:
-\begin{soliditemize}
+\begin{itemize}
 	\item Attack -- an algorithm that generates adversarial examples.
 	\item Defense -- an idea used to make an algorithm resistant to adverarial examples.
 	\item Natural example -- an example from the distribution that the training data was sampled from that is not adversarial to the hypothesis.
@@ -309,7 +318,7 @@ Here are some common terms related to adversarial examples defined:
 	\item Threat model -- a set of constraints on attacks. A defense should assume a threat model under which it is meant to work.
 	\item Adversarial robustness (short: robustness) -- either the performance of a hypothesis or algorithm under some threat model or how large a perturbations must be in order to turn natural examples into adversarial examples.
 	\item Adversarial training -- training that uses adversarial examples generated with an attack besides natural examples.
-\end{soliditemize}
+\end{itemize}
 Because an adversarial example can be defined in more ways depending on the usefulness of the definition, and the definition is important for making precise conclusions, the definitions of an adversarial example will be discussed in section \ref{sec:adversarial-example-definitions}.
 
 
@@ -317,23 +326,23 @@ Because an adversarial example can be defined in more ways depending on the usef
 A broadly accepted definition of an adversarial example is that it is \textit{an input designed to fool a hypothesis into producing a misprediction}. To make it more precise and useful, the "designed" part can be replaced with the constraint that adversarial examples are should be close to examples with correct predictions, which serves as a distinction between adversarial examples and examples far from decision boundaries with mispredicted labels causing standard generalization error. We get the following definition.
 \begin{definition}[adversarial example] \label{def:ae-consistent}
 	An adversarial example is an input for which the following holds:
-	\begin{solidenumerate}
+	\begin{enumerate}
 		\item It is close to an input with a correct prediction.
 		\item The hypothesis produces a misprediction.
-	\end{solidenumerate}
+	\end{enumerate}
 \end{definition}
 By this definition, the set of adversarial examples is a function of the hypothesis, the true hypothesis, and a neighbourhood function. A misprediction can be defined via some distance between distributions and a threshold. In classification, a misprediction is usually defined as misclassification, i.e. the class with the highest predicted probability being different from true class.
 
 As will be explained, a more practical, but less consistent definition is the following. 
 \begin{definition}[practical adversarial example] \label{def:ae-practical}
 	A (practical) adversarial example is an input for which the following holds:
-	\begin{solidenumerate}
+	\begin{enumerate}
 		\item It is close to an input with a correct prediction.
 		\item The hypothesis produces a different prediction than for the input it is based on (the input from point 1).
-	\end{solidenumerate}
+	\end{enumerate}
 \end{definition}
 Likewise, the difference between prediction can be defined via a distance between distributions.	
-In classification, predictions of a hypothesis being different usually means that the class with the highest probability differs.
+In classification, predictions of a hypothesis being different usually means that the class with the highest probability differs between the predictions.
 
 The difference from the first definition is that in the second definition knowledge of the true label is substituted with the prediction for the input with the correct prediction. This is useful for finding adversarial examples because all constraints can be known, but it is possible for a pair of natural examples differing in the label to have overlapping neighbourhoods and thus to be inside each other's neighbourhoods and thus be adversarial examples of each other. By the second definition, Even the true hypothesis can have adversarial examples close to decision boundaries. The first definition is more consistent in this sense, but then, knowing whether something is an adversarial example requires knowing the true hypothesis (i.e. it requires having solved the problem we are trying to solve with machine learning). In the following text, we will refer to the first definition as \textit{the consistent definition} and the second one as \textit{the practical definition}.
 
@@ -473,7 +482,7 @@ where $D$ is some non-negative function that represents distance between distrib
 Being that finding adversarial examples is a constrained optimization task, general gradient-based and black-box optimization algorithms can be used for attacks. Additionally, sometimes techniques specific to some potential defense and machine learning algorithm have to be used.
 
 Some commonly known gradient-based attacks for finding adversarial examples are the following (using the notation from section \ref{sec:finding-adversarial-examples}):
-\begin{soliditemize}
+\begin{itemize}
 	\item Box-constrained L-BFGS -- \citet{Szegedy:2013:IPNN} propose to minimize $c\enVert{\vec x -\tilde{\vec x}}_2^2+L(y,h(\tilde{\vec x}))$ with the constraint $\tilde{\vec x}\in\intcc{0,1}$ with L-BFGS, a quasi-Newton optimization method. $c$ is a number obtained via line-search that yields adversarial examples of minimum distance.
 	\item Fast gradient sign method (FGSM) -- an attack proposed by \citet{Goodfellow:2014:EHAE} that requires a single gradient computation:
 	\begin{align}
@@ -487,7 +496,7 @@ Some commonly known gradient-based attacks for finding adversarial examples are 
 	\end{equation}
 	$\alpha$ is the step size, and $\Pi_{B_\epsilon(\vec x)}$ is the projection into the $L^p$ $\epsilon$-ball around $\vec x$.
 	\item Carlini-Wagner (CW) attacks -- \citet{Carlini:2017:TERNN} propose attacks with similar minimal perturbation objectives as \cite{Szegedy:2013:IPNN} and \citet{Moosavi-Dezfooli:2016:DFSAMFDNN}. They modify the loss function and, to enable unconstrained optimization, they introduce change of variables $\vec\delta=\frac{1}{2}\del{\tanh\del{\vec w} + \cvec 1} - \vec x$, which limits the perturbation $\vec\delta$ to the interval $\intcc{0,1}$. With the PGD (BIM) attack, it is currently probably one of the 2 strongest attacks.
-\end{soliditemize}
+\end{itemize}
 
 
 
@@ -529,11 +538,11 @@ Here are some recent discoveries related to adversarial robustness and generaliz
 Based on some ideas from \citet{Tsipras:2018:RMBOA},  \citet{Ilyas:2019:AENBTF} propose an interesting and experimentally well supported hypothesis on the nature of features that well-generalizing non-robust classifiers learn. They show that existence of adversarial examples can be directly attributed to existence of  non-robust features, "features derived from patterns in the data that are highly predictive but brittle and incomprehensible to humans". 
 
 They demonstrate the predictiveness of non-robust features by 
-\begin{solidenumerate}
+\begin{enumerate}
 	\item constructing a dataset $\set D_\text{NR}$ where approximately the only useful features are non-robust features by turning inputs of the original dataset $\set D$ into adversarial examples for a classifier that was trained standardly and relabeling them with the adversarial label,
 	\item training a new classifier on the non-robust dataset $\set D_\text{NR}$,
 	\item testing the new classifier on the original test set where it achieves performance close to the original classifier and lower robustness.
-\end{solidenumerate}
+\end{enumerate}
 
 In another experiment, they try to remove non-robust-features from inputs with the help of an adversarially trained classifier. A new classifier trained on the dataset with removed non-robust features achieves a bit lower performance and robustness not as high as the adversarially trained classifier but quite significant compared to the standardly trained classifier. Results of these experiments with the CIFAR-10 dataset \citep{Krizhevsky:2009:LMLFTI} are shown in figure \ref{fig:iliyas-experiment-results}.
 
@@ -717,6 +726,11 @@ Why?
 
 
 
+
+\part{Generative models}
+
+
+
 \section{Generative adversarial networks}
 
 \subsection{Getting the probability of the example from the generator}
@@ -726,6 +740,28 @@ first paragraph
 case 1) normal generator
 
 case 2) invertible generator
+
+
+
+
+\part{Ideas from papers and paper summaries}
+
+
+
+\section{Ideas from papers}
+
+\subsection{Excessive Invariance Causes Adversarial Vulnerability}
+
+\citet{Jacobsen:2019:EEICNBAR}:
+\begin{itemize}
+    \item \say{We hypothesize that a major reason for this excessive invariance can be understood from an information-theoretic viewpoint of cross entropy, which maximizes a bound on the mutual information between labels and representation, giving no incentive to explain all class-dependent aspects of the input. This may be desirable in some cases, but to achieve truly general understanding of a scene or an object, machine learning models have to learn to successfully separate essence from nuisance and subsequently generalize even under shifted input distributions.}
+    \item \say{All adversarial examples can be reached either by crossing the decision-boundary of the classifier via perturbations, or by moving within the pre-image of the classifier to mis-classified regions. The two viewpoints are complementary to one another and highlight that adversarial vulnerability is not only caused by excessive sensitivity to semantically meaningless perturbations, but also by excessive insensitivity to semantically meaningful transformations.}
+\end{itemize}
+
+\subsection{You Only Propagate Once: Accelerating Adversarial
+Training via Maximal Principle}
+
+
 
 
 \section{Paper summaries}
