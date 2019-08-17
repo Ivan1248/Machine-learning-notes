@@ -6,12 +6,15 @@
 \newtheorem{definition}{Definition}
 
 
-\raggedright						% bez desnog poravnavanja
-\raggedbottom
+\raggedright	% no right alignment
+\raggedbottom   % no vertical stretching
+
+% Captions
 \usepackage{caption}
 \captionsetup{%
 	justification=raggedright,
 }
+
 \usepackage{etoolbox}
 \makeatletter
 	\patchcmd{\@dottedtocline}
@@ -49,15 +52,11 @@
 %\newtheorem{theorem}{Teorem}[section]
 %\newtheorem{definition}{Definicija}[section]
 
-\usepackage{enumitem}  % \begin{enumerate}[topsep=0pt,itemsep=0pt,partopsep=0pt]
+\usepackage{enumitem} \setlist[enumerate,1]{topsep=0pt,itemsep=0pt,partopsep=0pt}
+\setlist[itemize,1]{topsep=0pt,itemsep=0pt,partopsep=0pt}
+
  
 \DeclareTextFontCommand{\emphasize}{\bfseries}
 
-\newenvironment{solidenumerate}
-	{\begin{enumerate}[topsep=0pt,itemsep=0pt,partopsep=0pt]}
-	{\end{enumerate}}
 
-\newenvironment{soliditemize}
-{\begin{itemize}[topsep=0pt,itemsep=0pt,partopsep=0pt]}
-	{\end{itemize}}
-
+\usepackage{dirtytalk}
