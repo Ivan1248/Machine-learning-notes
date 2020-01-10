@@ -1,8 +1,8 @@
-Improved text about adversarial examples\documentclass[oneside]{book}
-%\documentclass[twocolumn]{article}
+\documentclass[oneside]{book}
 \usepackage[utf8]{inputenc}
 \input{imports/font}
 \input{imports/text}
+
 
 \input{imports/math}
 \input{imports/tables}
@@ -35,6 +35,11 @@ Improved text about adversarial examples\documentclass[oneside]{book}
 \endgroup
 
 
+\part{Notes}
+
+
+
+\iffalse
 \chapter{Introduction}
 
 
@@ -169,7 +174,27 @@ Notation, where $f\in(\set A\to\set B)$, $x\in \set A$, and $y \coloneqq f(x)$ (
     \Dif_{x\mapsto y} &= \pd{y}{x} = \pd{y}{x}(x') &&\text{ is a domain element (short), }
 \end{align}
 
-\subsection{Dependence of gradient on parametrization}
+\subsection{Dependence of gradient on parametrization (linear)}
+
+The gradient is an element of the input space. We can have 2 differentiable functions, $f$ and $g$, which are equivalent up to some bijective linear transformation represented with matrix $\vec A$:
+\begin{align}
+g(\vec A\vec x) = f(\vec x) \text{.}
+\end{align}
+Equivalently,
+\begin{align}
+f(\vec A^{-}\vec y) = g(\vec y) \text{.}
+\end{align}
+(Superscript "$-$" denotes the inverse.)
+
+We would like to define an alternative to the gradient operator that is equivariant to such linear transformations. Let $\vec y = \vec A\vec x$. We want
+\begin{align}
+\overline{\nabla}_{\vec x} f(\vec A \vec x) = \overline{\nabla}_{\vec y} f(\vec y) \text{.}
+\end{align}
+
+
+
+
+\subsection{Dependence of gradient on parametrization (simple, input multiplicative)}
 
 Let $\vec x$ be a vector in the input space of a differentiable function $f\in\del{\R^n\to\R}$. Let $\vec y \coloneqq \frac{1}{a}\vec x$. Then $f(a\vec y)=f(\vec x)$ and
 \begin{align}
@@ -184,13 +209,13 @@ Using equation \eqref{eq:reparametrization-grad}, we can compare the ratio of th
 \end{align}
 
 In order to make the gradient invariant to such a parametrization, it could be divided by the square of its $p$-norm (or multiplied by the square of the norm of the parameter).
-We can eaily show that the scaled gradient is independent of the parametrization:
+We can easily show that the scaled gradient is independent of the parametrization:
 \begin{align}
     \frac{\enVert{\pd{f\del{a\vec y}}{\vec y}}^{-2}\pd{f\del{a\vec y}}{\vec y}}{\enVert{\vec y}}
     = \frac{\enVert{a\pd{f\del{\vec x}}{\vec x}}^{-2}a\pd{f\del{\vec x}}{\vec x}}{\frac{1}{a}\enVert{\vec x}}
     = \frac{\enVert{\pd{f\del{\vec x}}{\vec x}}^{-2}\pd{f\del{\vec x}}{\vec x}}{\enVert{\vec x}} \text{.}
 \end{align}
-An issue that is introduced here is that the scaled gradient can't be $\cvec 0$. Moreover, it will grow as the unscaled gradient approaches $\cvec 0$, which is often undesirable. Alternatively, instead of dividing by the norm of its norm, the gradient could be multiplied by the square of the norm of the parameter:
+An issue that is introduced here is that the scaled gradient can not be $\cvec 0$. Moreover, it will grow as the unscaled gradient approaches $\cvec 0$, which is often undesirable. Alternatively, instead of dividing by the norm of its norm, the gradient could be multiplied by the square of the norm of the parameter:
 \begin{align}
     \frac{\enVert{\vec y}^{2}\pd{f\del{a\vec y}}{\vec y}}{\enVert{\vec y}}
     = \frac{\enVert{\frac{1}{a}\vec x}^{2}a\pd{f\del{\vec x}}{\vec x}}{\frac{1}{a}\enVert{\vec x}}
@@ -270,458 +295,36 @@ Ipak, pokazano je se da se (kod nekih modela) izvanrazdiobni primjeri često mog
 \subsection{Successfulness of epistemic uncertainty estimation with bayesian inference approximation}
 
 
+\chapter{Generalization}
 
+The generalization gap correlates strongly with statistics of (an approximation of) normalized margins in layers throughout the model \citep{Jiang:2019:PGGDNMD}.
 
-\chapter{Generalization and robustness}
+Also relevant: \cite{Bartlett:2017:SNMBNN}, \cite{Liao:2018:SLRPTPDN}.
 
 
+\chapter{Robustness and generalization notes}
 
-\section{Introduction}
+\section{Adaptive adversarial training}
 
-Although common machine learning algorithms achieve human-level performance in many tasks, when given out-of-distribution, domain-shifted, corrupted or slightly modified examples from the training data distribution, they can often make overconfident and incorrect predictions \citep{Hendrycks:2016:BDMOODE,Ganin:2015:UDAB,Nguyen:2015:DNNEFHCPUI,Hendrycks:2019:BNNRCCP,Engstrom:2017:RTSFCST,Szegedy:2013:IPNN}. Perhaps most surprisingly, by perturbing input examples (e.g. images) even inperceptibly for humans, common state-of-the-art algorithms can be made to significantly change their predictions both for examples from and outside of the training data distribution \citep{Szegedy:2013:IPNN, Goodfellow:2014:EHAE}. Such perturbed examples are called \textit{adversarial examples}. The existence of adversarial examples indicates that common algorithms are probably performing well for somewhat wrong reasons, without actually \textit{understanding data}.
+MMA
 
-Although adversarial examples exist on other tasks, image classification algorithms with deep, mostly convolutional, models is the problem considered in most research on adversarial examples. In the following text, the problem of image classification will be considered mostly as well.
+INSTANCE ADAPTIVE ADVERSARIAL TRAINING
 
-Some evidence suggests that there is a trade-off between robustness and generalization \citep{Tsipras:2018:RMBOA,Madry:2017:TDLMRAA,Su:2018:IRTCOACSRDICM} with current algorithms, which is counter-intuitive because a hypothesis which optimally generalizes would have no adversarial examples. The question remains whether it is feasible or tractable with respect to computation or amount of data to implement such algorithms. A small but interesting step in this direction has been made by \citep{Stutz:2018:DARG}.
+SENSIBLE ADVERSARIAL LEARNING
 
-A brief overview over a subset of the research on adversarial examples will be given with the goals of improving intuition and understanding of adversarial examples, understanding how robustness and generalization of deep models relate, and getting closer to knowing whether it is possible to improve both robustness and generalization on real-world datasets. 
+\section{Batch normalization}
 
+\subsection{Batch Normalization is a Cause of Adversarial Vulnerability}
 
-\section{Definitions and notation}
+\say{For all models tested, the batch-normalized variant had a higher error rate for all corruptions of the “noise” category, at every intensity level.}
+\say{{[...]} batch norm improved accuracy to:} contrast, snow, spatter. \say{Visually, these corruptions appear to preserve texture information. Conversely, noise is applied in a spatially global way that disproportionately degrades these textures, emphasizing shapes and edges. It is now known that modern CNNs trained on standard image datasets have a propensity to rely on texture, but we would rather they use shape and edge cues \citep{Geirhos:2019:INTCBTT,Brendel:2019:ACBLFMWSWI}. Our results support the idea that batch norm may be exacerbating this tendency to leverage superficial textures for classification of image data.}
 
-To prevent some ambiguities, we define some basic machine learning concepts as they will be used here:
-\begin{soliditemize}
-	\item Hypothesis -- a mapping from inputs to predictions. A hypothesis will be denoted $h(\vec x)$ or $h(\vec x;\vec\theta)$, where $\vec x\in\set X$ is an input vector and $\vec\theta$ a fixed vector of model parameters. For discriminative models $h(\vec x)=\p(\rvar y\mid\vec x)$, where $\rvar y\mid\vec x$ is a conditioned random variable, short for $\rvar y\mid\rvec x=\vec x$. Random variables are underlined.
-	\item Model -- a set of hypotheses $\set H$ or a function $h$ defined up to some free parameters $\vec\theta$: $\set H=\cbr{\vec x\mapsto h(\vec x;\vec\theta)}_{\vec\theta}$.
-	\item Machine learning algorithm (short: algorithm) -- usually a model together with inductive bias and an objective function. %, and an optimization procedure.
-	\item Classifier -- a hypothesis that outputs a categorical distribution.
-	\item The true hypothesis -- the best hypothesis given knowledge of the true underlying distribution. Usually, it can be known only for synthetic data.
-	%\item Misprediction -- given some hypothesis and an example, a prediction of the hypothesis that differs from the true prediction.
-	\item Risk -- the expected error on the data distribution. For discriminative models it can often be expressed as
-	\begin{align}
-	R(h,\distrib D)\coloneqq\E_{(\vec x,y)\sim\distrib D}L(y, h(\vec x)) \text{,}
-	\end{align} where $L$ is the loss function, which is usually proportional to negative log-likelihood $\p(y\mid\vec x,\vec\theta)$.
-	\item Empirical risk -- the error on the empirical distribution $p_{\set D}$ (a uniform distribution over the set of observed examples $\set D$): $R_\text{E}(h,\set D)\coloneqq R(h,p_{\set D})$. The objective of a machine learning algorithm is to minimize a combination of empirical risk and structural risk, which usually represents the prior hypothesis probability of the hypothesis (parameters) $\p(\vec\theta)$.
-\end{itemize}
+\subsection{Intriguing properties of adversarial training at scale}
 
+\paragraph{Two-domain hypothesis.} Training on a mixture of adversarial and clean examples significantly reduces robustness compared o adversarial examples only. \say{We further show that adversarial training without removing clean images can also obtain strong robustness, if the mixture distribution is well disentangled at BN by constructing different minibatches for clean images and adversarial images to estimate normalization statistics, i.e., one set	of BNs exclusively for adversarial images and another set of BNs exclusively for clean images. An alternative solution to avoiding mixture distribution for normalization is to simply replace all BNs with batch-unrelated normalization layers, e.g., group normalization {[...]}.} \say{{[...]} additional performance gain is observed via enforcing consistent behavior of BN during training and testing.}
 
-Here are some common terms related to adversarial examples defined:
-\begin{itemize}
-	\item Attack -- an algorithm that generates adversarial examples.
-	\item Defense -- an idea used to make an algorithm resistant to adverarial examples.
-	\item Natural example -- an example from the distribution that the training data was sampled from.
-	\item Adversarial perturbation -- the difference between an adversarial example and the natural example it is based on. An adversarial example is based on a natural example iff the it is found in the neighbourhood of the natural example.
-	\item Targeted attack -- an attack with the goal that the hypothesis outputs some desired prediction.
-	\item Non-targeted attack -- an attack with the goal that the hypothesis outputs any misprediction.
-	\item Threat model -- a set of constraints on attacks. A defense should assume a threat model under which it is meant to work.
-	\item Adversarial robustness (short: robustness) -- either the performance of a hypothesis or algorithm under some threat model or how large a perturbations must be in order to turn natural examples into adversarial examples.
-	\item Adversarial training -- training that uses adversarial examples generated with an attack besides natural examples.
-	\item Standard training -- training that uses original examples from the training set without an attack.
-\end{soliditemize}
-Because an adversarial example can be defined in more ways, depending on the usefulness of the definition, and the definition is important for making precise conclusions, the definitions of an adversarial example will be discussed in section \ref{sec:adversarial-example-definitions}.
 
-
-\section{Adversarial example definitions} \label{sec:adversarial-example-definitions}
-
-A broadly accepted definition of an adversarial example is that it is \textit{an input designed to fool a hypothesis into producing a misprediction}. To make it more precise and useful, the "designed" part can be replaced with the constraint that adversarial examples are close to examples with correct predictions, which serves as a distinction between adversarial examples and examples far from decision boundaries with mispredicted labels causing standard generalization error. We get the following definition.
-\begin{definition}[adversarial example] \label{def:ae-consistent}
-	An adversarial example is an input for which the following holds:
-	\begin{enumerate}
-		\item It is close to an input with a correct prediction.
-		\item The hypothesis produces a misprediction.
-	\end{enumerate}
-\end{definition}
-By this definition, the set of adversarial examples is a function of the hypothesis, the true hypothesis, and a neighbourhood function. A misprediction can be defined via some distance between distributions and a threshold. In classification, a misprediction is usually defined as misclassification, i.e. the class with the highest predicted probability being different from true class.
-
-As will be explained, a more practical, but less consistent definition is the following. 
-\begin{definition}[practical adversarial example] \label{def:ae-practical}
-	A (practical) adversarial example is an input for which the following holds:
-	\begin{enumerate}
-		\item It is close to an input with a correct prediction.
-		\item The hypothesis produces a different prediction than for the input it is based on (the input from point 1).
-	\end{enumerate}
-\end{definition}
-Again, the difference between predictions can be defined via a distance between distributions.	
-In classification, predictions of a hypothesis being different usually means that the class with the highest probability differs.
-
-The difference from the first definition is that in the second definition knowledge of the true label is substituted with the prediction for the input with the correct prediction. This is useful for finding adversarial examples because all constraints can be known, but it is possible for a pair of natural examples differing in the label to have overlapping neighbourhoods and thus to be inside each other's neighbourhoods and thus be adversarial examples of each other. By the second definition, Even the true hypothesis can have adversarial examples close to decision boundaries. The first definition is more consistent in this sense, but then, knowing whether something is an adversarial example requires knowing the true hypothesis (i.e. it requires having solved the problem we are trying to solve with machine learning). In the following text, we will refer to the first definition as \textit{the consistent definition} and the second one as \textit{the practical definition}.
-
-There are also some different or broader definitions of adversarial examples. Some authors consider out-of-distribution examples producing high-confidence predictions \citep{Gal:2018:SCIMHNAETESBNN} or, most broadly, any inputs that fool the hypothesis \citep{Brown:2018:UAE}.
-
-
-\section{The manifold hypothesis}
-
-A useful assumption in many machine learning problems is that the distribution of high-dimensional data is approximately concentrated in low-dimensional manifolds \citep{Goodfellow:2016:DL}. A manifold can be described as a set of points related through neighourhoods that locally resembles a euclidean space. In machine learning, the term tends to be used loosely, usually denoting a connected set of points that can be approximated well with a small number of degrees of freedom, each corresponding to a local direction of variation, embedded in a higher-dimensional space. 
-\citep{Goodfellow:2016:DL} provide the following evidence. Firstly, the fact that the chance a natural example will be sampled from a simple distribution in a high-dimensional space is negligible indicates that the data distribution is highly concentrated. Secondly, we can imagine transformations that represent connections between similar examples and can be applied to traverse the manifold (e.g. for images).
-
-One of the goals of generative models is often to model the data manifold with a lower-dimensional representation. This assumption provides useful intuition for generative models, dimensionality reduction, the understanding of adversarial examples, and some adversarial defenses.
-
-
-\section{Properties of adversarial examples}
-
-Here some properties, phenomena and hypotheses regarding adversarial examples are described, some of which are more or less supported by evidence. Besides the hypotheses described here, there is also a quite predictive and well suppoted by evidence -- the \textit{non-robust features} hypothesis \citep{Ilyas:2019:AENBTF,Tsipras:2018:RMBOA} described in section \ref{sec:robustness-generalization}, which might not be in contradiction with most of the hypotheses presented here. A broader overview can be found in e.g. \citet{Serban:2018:AECCP}.
-
-\paragraph{Rareness and closeness to natural examples} The existence of adversarial examples shows that near almost every input, there are misclassified inputs nearby. Evidence also shows that they are rare, i.e. they can not be easily found with random search in the neighbourhood of an natural example. This initially lead to the hypothesis that existence of adversarial examples is caused by high nonlinearity of deep models and that they are located in \textit{low-probability pockets} in the data manifold \citep{Szegedy:2013:IPNN}. 
-
-\paragraph{Local linearity} However, \citet{Goodfellow:2014:EHAE} have found that it is usually enough to know the locally linear behaviour (gradient with respect to the input) to reliably generate adversarial examples along directions of increasing the linear approximation. This is visualized in figure \ref{fig:fgsm-adversarial-example}. They show that the direction of the perturbation matters more than the position in input space, evidencing against the low-probability pockets hypothesis. They suggest the \textit{linearity hypothesis} whereby high local linearity of models accounts for the existence of adversarial examples. Summing small perturbations in many elements of high-dimensional inputs can produce a large change in the prediction. \citet{Su:2017:OPAFDNN} have shown that even modifying only $1$ pixel can often be enough to cause a misclassification, indicating that models can be highly sensitive to some input elements. \citet{Tabacof:2016:ESAI} have found more evidence that adversarial examples span many-dimensional subsets in the input space.
-
-
-\begin{figure}[htbp!]
-	\centering
-	{\small
-		\begin{tabular}{>{\centering\arraybackslash}m{.22\columnwidth}m{.1in}>{\centering\arraybackslash}m{.22\columnwidth}m{.05in}>{\centering\arraybackslash}m{.22\columnwidth}}
-			\centering\arraybackslash
-			%abs max for panda was 138, eps was 1., so relative eps is ~.007
-			\includegraphics[width=.22\columnwidth]{adversarial-examples/panda_577.png} &%
-			\centering\arraybackslash%
-			$\centering +\ \epsilon \cdot$ &%
-			\includegraphics[width=.22\columnwidth]{adversarial-examples/nematode_082.png} &%
-			$\centering =$ & %
-			\includegraphics[width=.22\columnwidth]{adversarial-examples/gibbon_993.png} \\
-			$\centering \vec x$     &%
-			& $\sgn\del{\nabla_{\vec x} L(y,h(\vec x))}$ & & $\tilde{\vec x}$ \\
-			\emph{panda} (0.577) & & & & \emph{gibbon} (0.993) 
-		\end{tabular}
-	}
-	\caption{Generation of an adversarial example with FGSM, a single step attack. Italic words and numbers represent classes and confidences. The images are from \citet{Goodfellow:2014:EHAE}.}
-	\label{fig:fgsm-adversarial-example}
-\end{figure}
-
-\paragraph{Transferability} An interesting property is that adversarial examples generated for one model are often misclassified by other models and models trained on different datasets, i.e. they generalize across models and datasets \citep{Szegedy:2013:IPNN}. This property of adversarial examples is called transferability. This suggests that most state-of-the art deep models are similarly biased. More analysis of transferebility can be found in \citet{Papernot:2016:TMLPBBAAS,Liu:2016:DTAEBBA,Tramer:2017:STAE}. 
-
-\paragraph{Universal perturbations} \citet{Moosavi-Dezfooli:2016:UAP} have observed that there exist perturbations that can reliably produce adversarial examples when added to almost any input and hypothesize that they exploit geometric correlations between different parts of decision boundaries. 
-
-\paragraph{Boundary tilting} \citet{Tanay:2016:ABTPPAE} hypothesize that adversarial examples exist when the decision boundary lies close to the submanifold of sampled data. They suggest that adversarial examples might be occurring along low-variance directions of the data where it is close to the manifold and that robustness could be improved with regularization. This is illustrated in figure \ref{fig:tanay-boundary-tilting}.
-
-\begin{figure}[htbp!]
-	\begin{center}
-		\includegraphics[width=\columnwidth]{figures/adversarial-examples/tanay-newPerspective.pdf}
-	\end{center}
-	\caption{An illustration of boundary tilting from \citet{Tanay:2016:ABTPPAE}.}
-	\label{fig:tanay-boundary-tilting}
-\end{figure}
-
-\paragraph{High-dimensional space manifold geometry} \citet{Gilmer:2018:AS} hypothesize that the existence of adversarial examples could be a naturally occurring result of the geometry of high-dimensional data manifolds. For a simple dataset with two classes consisting of examples from a pair of high-dimensional concentric spheres, they have observed that most random points in the data distribution are both correctly classified and close to a misclassified point. The authors have also given negative evidence on the hypothesis that adversarial examples are off the data manifold by showing that \textit{on-manifold} adversarial examples can exist as well.
-
-\paragraph{Adversarial examples of generative models} Adversarial examples are not just a phenomenon related to discriminative models. They have been found to exist for some generative models as well \citep{Goodfellow:2014:EHAE,Kos:2018:AEGM}. An example is shown in figure \ref{fig:vae-gan-targetad-face}.
-
-\begin{figure}[htbp!]
-	\begin{center}
-		\raisebox{-0.5\height}{\includegraphics[scale=0.6]{figures/adversarial-examples/kos-exp11-faces-summary.png}}
-		~
-		\raisebox{-0.5\height}{\includegraphics[scale=0.075]{figures/adversarial-examples/kos-exp11-faces-target-reconstruction.png}}
-	\end{center}
-	\caption{Reconstruction outputs for targeted attacks on a VAE-GAN model from \citet{Kos:2018:AEGM}. The rows represent of original image reconstructions (top), reconstructions of adversarial examples generated using an attack in latent space (middle) and a VAE-loss attack (bottom). The target reconstruction is on the right.}
-	\label{fig:vae-gan-targetad-face}
-\end{figure}
-
-%\paragraph{Adversarial reprogramming.}
-
-\paragraph{True ambiguity of adversarial examples of robust classifers}
-Qualitative assesment of adversarial examples of robust classifiers suggest that they \textit{understand data} much better. Their adversarial examples really are ambigous, i.e. generated perturbations don't look like noise but are semantically meaningful to humans \citep{Tsipras:2018:RMBOA,Li:2019:AGCMRAA}.  This is illustrated in figures \ref{fig:tsipras-robust-adversarial-examples} and \ref{fig:li-gfz-adversarial-examples-mnist}. An interesting observation is that adversarially trained discriminative classifiers together with an iterative attack can interpolate between and generate quite realistic examples. \citet{Tsipras:2018:RMBOA} suggest a connection between the the saddle point problem of adversarial training and GAN training \citep{Goodfellow:2014:GAN}.
-
-\begin{figure}[htbp!]
-	\begin{center}
-		\includegraphics[width=0.85\columnwidth]{figures/adversarial-examples/tsipras-turtle-bird-cat-dogs}
-	\end{center}
-	\caption{Original images and adversarial examples generated with a large perturbation using an iterative non-targeted attack on an adversarially trained Restricted ImageNet \citep{Tsipras:2018:RMBOA} classifier from \citet{Tsipras:2018:RMBOA}.}
-	\label{fig:tsipras-robust-adversarial-examples}
-\end{figure}
-
-\begin{figure}[htbp!]
-	\begin{center}
-		\raisebox{-0.5\height}{\includegraphics[scale=0.65]{figures/adversarial-examples/li-data_clean.png}}
-		\
-		\raisebox{-0.5\height}{\includegraphics[scale=0.65]{figures/adversarial-examples/li-bayes_A_cw_adv.png}}
-	\end{center}
-	\caption{Clean images (left) and adversarial examples generated using an iterative non-targeted attack on a generative MNIST \citep{LeCun:2015:DL} classifier with the factorization $\p(\vec z)\p(\vec y\mid\vec z)\p(\vec x\mid\vec z,\vec y)$ (right) from \citet{Li:2019:AGCMRAA}. The adversarial examples marked in green are successful.}
-	\label{fig:li-gfz-adversarial-examples-mnist}
-\end{figure}
-
-Further interesting phenomena and hypotheses related to the nature of adversarial examples, adversarial robustness and generalization will be discussed in section \ref{sec:robustness-generalization}.
-
-
-\section{Finding adversarial examples} \label{sec:finding-adversarial-examples}
-
-Let $\set X$ be the input space,
-and $d\in(\set X\times\set X\to \R^+)$ a \textit{distance function} for definining similarity between inputs. 
-For each example $\vec x$, 
-we can also define its \textit{neighbourhood} as $B_{\epsilon}(\vec x) = \cbr{\vec x'\colon d(\vec x', \vec x) \leq \epsilon}$,
-where $\epsilon$ is the maximum distance from the example.
-
-Ideally, the neighbourhood of an example $\vec x$ should be the set of \textit{perceptually similar} examples that all belong to the same class as $\vec x$ (their true class may be at most ambiguous), but it is hard to define such a neighbourhood (as it requires knowing the true model). A practical and common way of defining the neighbourhood function for images is to have $d$ be a $L^p$ distance where $p$ is usually $\infty$ or $2$. Note that, if an example is very near the true class boundary, such a neighbourhood may contain examples belonging to another class. 
-
-\subsection{Attack objectives}
-
-Finding an adversarial example can be defined as a constrained optimization problem of maximizing some loss with respect to the input with the constraint that the input is in the neighbourhood $B_\epsilon(\vec x)$:
-\begin{align}
-\tilde{\vec x} = \argmax_{\vec x'\in B_\epsilon(\vec x)} L(y, h(\vec x')) \text{,} \label{eq:non-targeted-loss-attack}
-\end{align}
-where $y$ is the true label. Let $\hat{h}(\vec x) \coloneqq \argmax_{y} h(\vec x)_\ind{y}$ denote the function that assigns the label with the highest probability to an input.
-An objective can also be to find the $\tilde{\vec x}$ closest to $\vec x$ such that the classifier misclassifies it \citep{Moosavi-Dezfooli:2016:DFSAMFDNN}:
-\begin{align}
-\tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x') \neq y} d(\vec x', \vec x) \text{.} \label{eq:non-targeted-closest-attack}
-\end{align}
-
-The described objectives, where it only matters that the adversarial example is misclassified, are objectives for \textit{non-targeted adversarial attacks}. There are also \textit{targeted adversarial attacks}, where the objective is to create an adversarial example such that the model classifies it as some desired target. Targeted attack objectives corresponding to equations \eqref{eq:non-targeted-loss-attack} and \eqref{eq:non-targeted-closest-attack} are:
-\begin{align}
-\tilde{\vec x} &= \argmin_{\vec x'\in B_\epsilon(\vec x)} L(y_\text{a}, h(\vec x')) \text{,} \label{eq:targeted-loss-attack} \\
-\tilde{\vec x} &= \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x') = y_\text{a}} d(\vec x', \vec x) \text{,} \label{eq:targeted-closest-attack}
-\end{align}
-where $y_\text{a}$ denotes the adversarial target label. The difference in equation \eqref{eq:targeted-loss-attack} is loss minimization and the adversarial target label instead of the true label. The difference in equation \eqref{eq:targeted-closest-attack} is the condition that the predicted labels equals the adversarial target instead of differing from the true label.
-
-non-targeted adversarial examples can also be generated without knowledge of the true label. Instead of the true label $y$, the predicted label $\hat{h}(\vec x)$ can be used in equations \eqref{eq:non-targeted-loss-attack} and \eqref{eq:non-targeted-closest-attack}. Such adversarial examples are called \textit{virtual adversarial examples}.
-\citet{Miyato:2017:VATRMSSSL} propose the following attack objective for use in semi-supervised learning:
-\begin{align}
-\tilde{\vec x} = \argmin_{\vec x'\in B_\epsilon(\vec x)} D((\rvar y\mid \vec x, \vec\theta), (\rvar y\mid \rvec x = \vec x', \vec\theta)) \text{,}
-\end{align}
-where $D$ is some non-negative function that represents distance between distributions.
-
-For adversarial training, non-targeted attacks should be preferred due to the \textit{label-leaking} phenomenon \citep{Kurakin:2016:AMLS} where the learned classifier can overfit to adversarial examples and perform better on them than on natural examples, especially with attacks with a small number of iterations. For robustness evaluation with datasets that have many similar classes, non-targeted attacks can too easily fool the classifier and targeted attacks give more meaningful evaluation results \citep{Athalye:2018:OGGFSS}.
-
-\subsection{Common attacks}
-
-Being that finding adversarial examples is a constrained optimization problem, general gradient-based and black-box optimization algorithms can be used for attacks. Additionally, sometimes techniques specific to some potential defense and machine learning algorithm have to be used.
-
-Some commonly known gradient-based attacks for finding adversarial examples are the following (using the notation from section \ref{sec:finding-adversarial-examples}):
-\begin{itemize}
-	\item Box-constrained L-BFGS -- \citet{Szegedy:2013:IPNN} propose to minimize $c\enVert{\vec x -\tilde{\vec x}}_2^2+L(y,h(\tilde{\vec x}))$ with the constraint $\tilde{\vec x}\in\intcc{0,1}$ with L-BFGS, a quasi-Newton optimization method. $c$ is a number obtained via line-search that yields adversarial examples of minimum distance.
-	\item Fast gradient sign method (FGSM) -- an attack proposed by \citet{Goodfellow:2014:EHAE} that requires a single gradient computation:
-	\begin{align}
-	\tilde{\vec x} = \vec x + \epsilon\nabla_{\vec x} L(y,h(\vec x)) \text{,}
-	\end{align} 
-	where $\epsilon$ is the $L^\infty$-norm of the perturbation. For $L^2$-constrined perturbations, \citet{Miyato:2017:VATRMSSSL} propose $L^2$ normalization instead of the sign function.
-	\item DeepFool -- an iterative non-targeted attack proposed by \citet{Moosavi-Dezfooli:2016:DFSAMFDNN} that in each step finds the optimal solution to a linear approximation of a loss in the $L^2$ ball $B_\epsilon(\vec x)$ using the gradient in the current adversarial input. It is faster and finds smaller perturbations than L-BFGS and stronger than FGSM.
-	\item Projected gradient descent (PGD) \citep{Madry:2017:TDLMRAA} basic iterative method (BIM) \citep{Kurakin:2016:AEPW} -- an iterative gradient-based algorithm with random initialization \citep{Madry:2017:TDLMRAA} of the perturbation from within the $B_\epsilon(\vec x)$ at the start and steps in the direction of the gradient sign:
-	\begin{equation} \label{eq:pgd}
-	\tilde{\vec x}_i = \Pi_{B_\epsilon(\vec x)} \del{\tilde{\vec x}_{i-1} + \alpha\sgn\del{\nabla_{\tilde{\vec x}_{i-1}} L(y,h(\tilde{\vec x}_{i-1}))}} \text{.}
-	\end{equation}
-	$\alpha$ is the step size, and $\Pi_{B_\epsilon(\vec x)}$ is the projection into the $L^p$ $\epsilon$-ball around $\vec x$.
-	\item Carlini-Wagner (CW) attacks -- \citet{Carlini:2017:TERNN} propose attacks with similar minimal perturbation objectives as \citet{Szegedy:2013:IPNN} and \citet{Moosavi-Dezfooli:2016:DFSAMFDNN}. They modify the loss function and, to enable unconstrained optimization, they introduce change of variables $\vec\delta=\frac{1}{2}\del{\tanh\del{\vec w} + \cvec 1} - \vec x$, which limits the perturbation $\vec\delta$ to the interval $\intcc{0,1}$. With the PGD (BIM) attack, it is currently probably one of the 2 strongest attacks.
-\end{soliditemize}
-
-
-\section{Improving adversarial robustness}
-
-There are different approaches (\textit{defenses}) trying to improve adversarial robustness, most of which have been shown to actually be non-robust, but had appeared robust because they intentionally or unintentionally caused attacks that they were evaluated on not to be able to find adversarial examples \citep{Carlini:2017:AEANEDBTM,Athalye:2018:OGGFSS,Uesato:2018:ARDEAWA,Carlini:2017:TERNN}.  Thus, it is important to put as much effort as needed to correctly evaluate robustness, i.e. get an as low as possible upper bound on robustness. \citep{Carlini:2019:OEAR} is a recent helpful overview on evaluation of robustness. 
-
-A broad overview of many defenses can be found in \citet{Serban:2018:AECCP}. To give a few examples, some approaches use generative models to approximately project inputs to a learned data manifold (e.g. \citet{Samangouei:2018:DGPCAAAUGM}), some approaches are based on limiting the Lipschitz constant of the model to limit sensitivity to small input perturbations by regularization and model modification (e.g. \citet{Qian:2018:L2NNN}), some research is looking into ways of guaranteeing robustness (e.g. \citet{Cohen:2019:CARRS}).
-
-\subsection{Adversarial training and empirical adversarial risk}
-
-The only defense currently believed to be effective according to \citet{Athalye:2018:OGGFSS} is adversarial training \citep{Goodfellow:2014:EHAE} with a strong attack \citep{Madry:2017:TDLMRAA}, where the model is trained on adversarial examples as well as natural examples.
-
-\citet{Madry:2017:TDLMRAA} define what can be called \textit{empirical adversarial risk} by allowing the worst-case attack to modify each the input in the empirical risk expression:
-\begin{align}
-R_\text{EA}(h,\set D) \coloneqq \E_{(\vec x, y)\sim p_{\set D}} \del{\max_{\tilde{\vec x}\in B_\epsilon(\vec x)} L(y,h(\tilde{\vec x}))} \text{.}
-\end{align}
-They propose PGD for the attack during training and PGD with as large a number of iterations as necessary to approximate the worst-case adversary, i.e. get a better upper bound on robustness.
-
-Still, adversarially trained models are not robust to attacks with weaker constraints than those used for training \citep{Schott:2018:TDFARNNMM}. Furthermore, because adversarial examples are generated and robustness is evaluated according to the practical definition of an adversarial example and using $L^p$ distance as a non-ideal approximation of perceptual similarity, performance is affected \citep{Madry:2017:TDLMRAA,Tsipras:2018:RMBOA} and there can exist misclassified examples among which are \textit{invariance-based} adversarial examples \citep{Jacobsen:2019:EEICNBAR}.
-
-%Empirical and theoretical results show that improving robustness seems to be a problem that requires more model capacity and causes a reduction of performance on natural data \citep{Madry:2017:TDLMRAA,Tsipras:2018:RMBOA}.
-
-
-\section{Adversarial robustness and generalization} \label{sec:robustness-generalization}
-
-Based on the practical definition of an adversarial example or similar definitions, experimental \citep{Madry:2017:TDLMRAA,Su:2018:IRTCOACSRDICM} and theoretical evidence \citep{Tsipras:2018:RMBOA} suggests that there is a trade-off between robustness and standard generalization for current models.
-
-Here are some recent discoveries related to adversarial robustness and generalization presented. Robustness to distributional shift and corruptions also seems to be quite relevant \citep{Gilmer:2019:AENCTEN,Hendrycks:2019:BNNRCCP}, but it will not be discussed here.
-
-\subsection{A trade-off between robustness and generalization}
-
-\citet{Madry:2017:TDLMRAA,Su:2017:OPAFDNN,Tsipras:2018:RMBOA} and others have empirically observed that adversarial robustness with current algorithms requires more capacity and negatively affects generalization. \citet{Su:2017:OPAFDNN} have observed that older convolutional architectures with no shortcut connections, like AlexNet \citep{Krizhevsky:2012:ICDCNN} and VGG \citep{Simonyan:2014:VDCNLSIR} seem to be inherently more robust than architectures like ResNet \citep{He:2015:DRLIR}, DenseNet \citep{Huang:2016:DCCN} and MobileNet \citep{Howard:2017:MECNNMVA} and NASNets \citep{Zoph:2018:LTASIR} with standard training. \citet{Madry:2017:TDLMRAA} has observed that with adversarial training, more model capacity is required and natural test set performance is reduced. Furthermore, \citet{Tsipras:2018:RMBOA} have, based on the practical definition of an adversarial example, theoretically demonstrated an aspect of the trade-off. Another reason that affects performance suggested by them is that salient features might be harder to learn and that algorithms rely on highly predictive but \textit{non-robust} features.
-
-\subsection{Non-robust features}
-
-Based on some ideas from \citet{Tsipras:2018:RMBOA},  \citet{Ilyas:2019:AENBTF} propose an interesting and experimentally well supported hypothesis on the nature of features that well-generalizing non-robust classifiers learn. They show that existence of adversarial examples can be directly attributed to existence of  non-robust features, "features derived from patterns in the data that are highly predictive but brittle and incomprehensible to humans". 
-
-They demonstrate the predictiveness of non-robust features by: 
-\begin{solidenumerate}
-	\item constructing a dataset $\set D_\text{NR}$ where approximately the only useful features are non-robust features by turning inputs of the original dataset $\set D$ into adversarial examples for a classifier that was trained standardly and relabeling them with the adversarial label,
-	\item training a new classifier on the non-robust dataset $\set D_\text{NR}$,
-	\item testing the new classifier on the original test set where it achieves performance close to the original classifier and lower robustness.
-\end{enumerate}
-
-In another experiment, they try to remove non-robust-features from inputs with the help of an adversarially trained classifier. A new classifier trained on the dataset with removed non-robust features achieves a bit lower performance and robustness not as high as the adversarially trained classifier but quite significant compared to the standardly trained classifier. Results of these experiments with the CIFAR-10 dataset \citep{Krizhevsky:2009:LMLFTI} are shown in figure \ref{fig:iliyas-experiment-results}.
-
-\begin{figure*}[htbp!]
-	\centering
-	\begin{subfigure}[b]{0.45\textwidth}
-		\centering
-		\includegraphics[width=1.0\textwidth]{figures/adversarial-examples/ilyas/cifar_datasets.pdf}
-		\vfill\null
-		\caption{}
-		\label{fig:robust_inputs}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{0.5\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{figures/adversarial-examples/ilyas/CIFAR_res.pdf}
-		\caption{}
-		\label{fig:robustify_cifar}
-	\end{subfigure}
-	\caption{
-		(a) Random samples from variants of the
-		CIFAR-10 training set:
-		the original training set; 
-		the \textit{robust training set} $\set D_\text{R}$, restricted to features used by a
-		robust model; and
-		the \textit{non-robust training set} $\set D_\text{NR}$, restricted to
-		features relevant to a standard model (labels appear incorrect to humans).
-		(b) Standard and robust accuracy on the CIFAR-10
-		test set ($\set D$) for models trained with standard training, adversarial training, and standard training on datasets $\set D_\text{R}$ (robust) and $\set D_\text{NR}$ (non-robust). Adapted from \citet{Ilyas:2019:AENBTF}.}
-	\label{fig:iliyas-experiment-results}
-\end{figure*}
-
-\subsection{Training with on-manifold adversarial examples}
-
-\citet{Stutz:2018:DARG} challenge the hypothesis that there is a trade-off between robustness and generalization. They hypothesize that most adversarial examples come from directions orthogonal to the learned class manifolds and that training adversarial examples (as per a definition similar to definition \ref{def:ae-consistent}) limited to the known or learned class manifolds (on-manifold adversarial examples) can improve generalization. They conduct experiments with a synthetic dataset with known class-invariant transformations and datasets with small images that support the hypothesis that generalization can be improved with adversarial training with on-manifold adversarial examples.
-
-Class manifolds to which adversarial examples are restrited and on-manifold and off-manifold adversarial examples are illustrated in figure \ref{fig:stutz-illustration}.
-
-\begin{figure}[htbp!]
-	\begin{center}
-		\includegraphics[width=\columnwidth]{figures/adversarial-examples/stutz-introduction_b.pdf}
-	\end{center}
-	\caption{An illustration by \citet{Stutz:2018:DARG} of class manifolds (classes "5" and "6") with a regular (off-manifold) adversarial example and an on-manifold adversarial example.}
-	\label{fig:stutz-illustration}
-\end{figure}
-
-In one of the experiments \citet{Stutz:2018:DARG} construct a synthetic dataset with a known manifold (geometric transformations of letters) in order to be able to generate exactly on-manifold adversarial examples by modifying parameters of the geometric transformations. With this dataset, they succeed in improving generalization and on-manifold robustness\footnote{By the authors' definition of an adversarial example, which is similar to the consistent definition (definition \ref{def:ae-consistent}), except for that there is no closeness constraint, making it equivalent to the definition of a misclassified example, on-manifold robustness essentially boils down to generalization.} with adversarial training.
-
-In other experiments they use EMNIST \citep{Cohen:2017:EMNIST}, FashionMNIST \citep{Xiao:2017:FMNIDBMLA} and CelebA \citep{Liu:2015:DLFAW}. In order to better approximate class manifolds and disable leaving the manifold of a class when an adversarial example is generated for adversarial training, they first train one variational autoencoder (VAE-GAN) per class. They perform training and evaluation analogously to the experiment with synthetic data by allowing the attack to perturb the latent representation of the autoencoder corresponding to the correct class. They measure positive correlation between robustness to on-manifold adversarial examples and generalization. They observe worse quality of on-manifold adversarial examples for the more complex dataset CelebA due to worse approximation quality of their VAE-GAN-s.
-
-
-\section{Conclusion}
-
-This paper presents an overview of ideas related to the existence adversarial examples, hypotheses on their existence and some of their properties. It describes general principles regarding adversarial attacks, defenses and robustness evaluation and presents examples of such algorithms. Finally, some recent discoveries and hypotheses regarding the relation between robustness and generalization are explored. Some recent results \citep{Stutz:2018:DARG} suggest that finding ways of improving both robustness generalization might be an interesting research direction to explore.
-
-
-\newpage.
-\newpage
-
- Adversarially robust generalization requires
-more data show 
-
-distilling knowledge into a small dataset
-
-With some reasonable assumptions about the model, as the model approaches the true model (in robustness/), its (/on-manifold) adversarial examples would be becoming more close to the true decision boundary, i.e. truly more ambigous (/more often actually changing the class). The true model has no on-manifold adversarial examples, but it might not be defined for off-manifold examples, e.g. if it is a discriminative model.
-
-
-
-\newpage
-
-\subsection{Robustness evaluation}
-
-\citet{Athalye:2018:OGGFSS} state that, if there are classes that are very similar, using targeted attacks for robustness evaluation can give more meaningful results. 
-
-stronger attack targeted, stronger evaluation untargeted
-
-\subsubsection{Adversarial training}
-
-\citet{Kurakin:2016:AMLS} note that by using the true label in the loss in untargeted attacks ($y$ in equation \eqref{eq:untargeted-loss-attack}) can cause
-
-
-\newpage
-.
-\newpage
-\subsubsection{Distance metrics for images}
-
-Usually, an $L^p$ distance ($d(\vec x', \vec x)=\lVert\tilde{\vec x}-\vec x\rVert_p$) is used as a distance metric for adversarial examples.
-
-\paragraph{Scale-invariant norms.}
-Let $\vec x$ denote some image (or perturbation) and $\vec x_\lambda$ the same image with dimensions scaled by $\lambda$. $\vec x_\lambda$ has a greater norm because it contains $\lambda^2$ the number of pixels of the original image and every pixel is approximately effectively repeated $\lambda^2$ times. In terms of $\enVert{\vec x}_p$, its norm can be approximated like this:
-\begin{align*}
-    \enVert{\vec x_\lambda}_p 
-    &= \del{\sum_{u\in\cbr{0\bidot\lambda H}}\sum_{v\in\cbr{0\bidot\lambda W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} && \text{(norm definition)} \\
-    &\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} && \text{($\lambda^2$ element copies)} \\
-    &= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} \\
-    &= \lambda^\frac{2}{p} \enVert{\vec x}_p \text{.} && \text{(norm definition)}
-\end{align*}
-
-If there is a perturbation in $2$ different resolutions, the higher-resolution one will have a greater norm by approximately a factor of $(\lambda^2)^\frac{1}{p}$, especially if the perturbations don't have too high spatial frequencies. Hence, scale invariant equivalents of $L^p$ norms can be defined by dividing the norm by the scale factor. If we choose the scale factor to be relative to the scale of an image with area $1$, $\lambda^2$ is $n$, the total number of pixels. 
-
-We can define \textbf{scale-invariant norms} like this:
-\begin{align}
-    \mathrm{m}_p(\vec x) \coloneqq n^{-\frac{1}{p}}\enVert{\vec x}_p, \label{eq:scale-invariant-norm}
-\end{align}
-This can also be expressed as the \textbf{generalized mean} $\mathrm{M}_p$ (also known as \textbf{power mean}) of the elementwise absolute value:
-\begin{align}
-    \mathrm{m}_p(\vec x) = \mathrm{M}_p(\envert{\vec x}) \coloneqq \del{\frac{1}{n}\sum_i  \envert{\vec x_\ind{i}}^p}^{\frac{1}{p}}. \label{eq:generalized-mean}
-\end{align}
-Such norms could probably be useful for comparison of norms between different-resolution images and different datasets, and hyperparameter choice for adversarial attacks.
-
-Maybe something similar could be done about objects of different scale?
-
-...
-
-\paragraph{Expectation of scale-invariant norms uniformly distributed random vectors.}
-Let $\rvec x_n$ be a random vector with $n$ independent elements ${\rvec x_n}_\ind{i}\sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}}$.
-
-An easy special case is when $p=1$:
-\begin{align*}
-    \E\sbr{\mathrm{m}_1(\rvec x_n)}
-	= \E\sbr{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}}
-	= \E\sbr{\envert{{\rvec x_n}_\ind{i}}}  
-	= \frac{\epsilon}{2} \text{.}
-\end{align*}
-
-For very large $n$, we can approximate it like this:
-\begin{align*}
-	\lim_{n\to\infty} \E \sbr{\mathrm{m}_p(\rvec x_n)}
-	&= \E\sbr{\lim_{n\to\infty}\del{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}^p}^\frac{1}{p}} &&\text{(dominated convergence)} \\
-	&= \E\sbr{\E\sbr{\envert{{\rvec x_n}_\ind{0}}^p}^\frac{1}{p}} &&\text{(IID elements)}  \\
-	&= \E\sbr{\envert{{\rvec x_n}_\ind{0}}^p}^\frac{1}{p} &&\text{(redundant expectation)}  \\
-	&= \frac{1}{2\epsilon} \del{\int_{-\epsilon}^{\epsilon}\envert{x}^p\dif x}^\frac{1}{p} &&\text{(definition of expectation)}  \\	
-	&= \frac{1}{\epsilon}\del{\int_{0}^{\epsilon}x^p\dif x}^\frac{1}{p} &&\text{(absolute value symmetry)}  \\	
-	&= \frac{1}{\epsilon}\del{\frac{\epsilon^{p+1}}{p+1}}^\frac{1}{p} \text{.} \numberthis\label{eq:power-norm-n-infinity}
-\end{align*}
-Specially, for $\epsilon=1$, it evaluates to 
-\begin{align}
-	 \lim_{n\to\infty} \E \sbr{\mathrm{m}_p(\rvec x_n)} = (p+1)^{-\frac{1}{p}} \text{.}
-\end{align}
-
-TODO: Show that \eqref{eq:power-norm-n-infinity} is the upper bound if $p>1$ and the lower bound if $p<1$.
-
-By the power mean inequality, which can be proved by applying the Jensen inequality, $\mathrm{m}_p(\rvec x)$ is monotonically increasing in $p$ (for $p>0$).
-
-
-For easier analysis, let's first consider a special case: ${\rvec x_n}_\ind{i}\sim\mathcal{U}\del{\intcc{0,1}}$.
-\begin{align*}
-	\E \sbr{\mathrm{m}_p(\rvec x_n)}
-	&= \E\sbr{\del{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}^p}^\frac{1}{p}}  \\
-	% not good (no dependence on n): &\approx \E\sbr{\del{\frac{1}{2p}}^\frac{1}{p}}  \\
-	&= \idotsint_{\intcc{0,1}^n} \del{\frac{1}{n}\sum_i \envert{\vec x_\ind{i}}^p}^\frac{1}{p} \dif\vec x  \\
-	&= n^{-\frac{1}{p}}\idotsint_{\intcc{0,1}^n} \del{\sum_i \envert{\vec x_\ind{i}}^p}^\frac{1}{p} \dif\vec x  
-\end{align*}
-
-
-\paragraph{Local $p$-norm and hiererchical norm.}
-Let $\vec k$ denote a non-negative $2$-D kernel with $\enVert{\vec k}_1=1$, e.g. Gaussian cenetered at $(0,0)$. Let $\vec x$ denote an image perturbation and assume that it has a single channel for simplicity.
-We can define the local $p$-norm around a pixel $(i, j)$ as
-\begin{align}
-    \mathrm{LocalNorm}_{p,\vec k}(\vec x)_\ind{i,j} = \del{\envert{\vec x}^p * \vec k}_\ind{i,j}^\frac{1}{p},
-\end{align}
-where the absolute value and powering operatons are elementwise.
-
-We can then define a bi-level hierarchical $(p_1,p_2)$-norm as $\enVert{\mathrm{LocalNorm}_{p_1,\vec k}(\vec x)}_{p_2}$. This can be generalizad to a multi-level norm $(p_1,..,p_n)$-norm by chaining multiple local norms with potentially different kernels until the last, global, $p_n$-norm.
-
-Why?
-
-%Using e.g a $(1,\infty)$-norm for contraining adversarial perturbations could allow for more flexible perturbations locally, but having local changes not add up to the global norm.
-
-%To make the analysis easier, we can consider $\vec x$ and $\vec x_\lambda$ to be continous functions with delta-peaks at the coordinates of pixels. 
-
-%\begin{align}
-%    \enVert{\vec x_\lambda}_p = \del{ \int_{u\in\intcc{0,\lambda h}\cap\N}\int_{v\in\intcc{0,\lambda w}\cap\N} {\vec x_\lambda}\del{u, v}}^{\frac{1}{p}}
-%\end{align}
-
-
-\chapter{Other}
-
-
-\part{Generative models}
+\chapter{Generative models}
 
 
 
@@ -737,12 +340,32 @@ case 2) invertible generator
 
 
 
+\chapter{Other}
+
+\section{Convolutions}
+
+
+$1\times1$ $1$-D convolution
+\begin{align}
+\vec y_\ind{i,:} = \vec W\vec x_\ind{i, :}
+\end{align}
+
+\begin{align}
+\vec a_\ind{i,:} &= \vec W\vec x_\ind{i, :} \\
+\vec b_\ind{i} &= \vec a_\ind{i//4, \dim\del{\vec y_\ind{0,:}}\del{\del{i..(i+1)}\% 4}}
+\end{align}
+
+\begin{align}
+\vec a_\ind{i,:} &= \vec W\vec x_\ind{i, :} \\
+\vec b_\ind{i} &= \vec a_\ind{i//4, \dim\del{\vec y_\ind{0,:}}\del{\del{i..(i+1)}\% 4}}
+\end{align}
+
+
 
 \part{Ideas from papers and paper summaries}
 
 
-
-\section{Ideas from papers}
+\chapter{Ideas from papers}
 
 \subsection{Excessive Invariance Causes Adversarial Vulnerability}
 
@@ -751,6 +374,42 @@ case 2) invertible generator
     \item \say{We hypothesize that a major reason for this excessive invariance can be understood from an information-theoretic viewpoint of cross entropy, which maximizes a bound on the mutual information between labels and representation, giving no incentive to explain all class-dependent aspects of the input. This may be desirable in some cases, but to achieve truly general understanding of a scene or an object, machine learning models have to learn to successfully separate essence from nuisance and subsequently generalize even under shifted input distributions.}
     \item \say{All adversarial examples can be reached either by crossing the decision-boundary of the classifier via perturbations, or by moving within the pre-image of the classifier to mis-classified regions. The two viewpoints are complementary to one another and highlight that adversarial vulnerability is not only caused by excessive sensitivity to semantically meaningless perturbations, but also by excessive insensitivity to semantically meaningful transformations.}
 \end{itemize}
+
+\subsection{PixelCNN Models with Auxiliary Variables for Natural Image Modeling}
+
+\begin{itemize}
+	\item \say{By explicitly emphasizing the modeling of
+high-level image structures in the Grayscale PixelCNN, we
+achieve significantly better visual quality of the produced
+samples. Additionally, the Grayscale PixelCNN offers interesting insights into the image modeling task. As the objective we minimize for training is a sum of two scores,
+we can individually examine the performance of [the] auxiliary
+variable model $\p(\rvec{\hat x})$ and the conditional model $\p(\rvec x\mid \hat{\rvec x})$.
+The trained conditional model achieves $\p(\rvec x\mid \hat{\rvec x})$ a negative log-likelihood score of $2.52$ bits-per-dimension, while
+$\p(\rvec{\hat x})$ achieves a score of $0.459$ bits-per-dimension on the
+CIFAR-10 test set.
+In other words: high-level image properties, despite being harder to model for the network, contribute only a small fraction of the uncertainty score to the the overall log-likelihood.}
+\item \say{We take this as indication that if
+low-level and high-level image details are modeled by one
+model, then at training time low-level image uncertainty
+will dominate the training objective. We believe that this
+is this the key reason why previously proposed PixelCNN
+models failed to produce globally coherent samples of natural images. Importantly, this problem does not appear in
+the Grayscale PixelCNN, because global and local image
+models do not share parameters and, thus, do not interfere
+with each other at training phase.}
+\end{itemize}
+
+\subsection{Conditional Generative Models are not Robust}
+
+\begin{itemize}
+	\item For their flow model, \say{MNIST interpolated
+		images are far less likely than real images, whereas for CIFAR10 the opposite is observed, making it
+		trivial to fool the CIFAR density model with out-of-distribution samples.}
+	\item \say{We conclude that likelihood-based density modeling and robust classification may fundamentally be
+		at odds with one another as important aspects of the problem are not captured by this training and
+		evaluation metric. }
+\end{itemize}
+
 
 \subsection{You Only Propagate Once: Accelerating Adversarial
 Training via Maximal Principle}
@@ -847,6 +506,11 @@ Neki pristupi za prepoznavanje anomalija/izvanrazdiobnih primjera (detaljnije op
 \end{itemize}
 Neki pristup ise mogu kombinirati.
 
+IAAT
+
+MMA
+
+Testing robustness against unforeseen adversaries (Kang) - otpornost na napade s drugim p-ovima - slika 2
 
 \subsection{Autoencoders and GAN-s}
 
@@ -911,6 +575,600 @@ Rekonstrukciju ulazne slike možemo dobiti ako koristimo neki model koji je bije
 \subsubsection{Što bih još htio isprobati}
 
 Kombinaciju \cite{Lee:2017:TCCCDOOD} i korištenja izvanrazdiobnih primjera u učenju.
+
+
+
+
+
+
+
+\part{Articles}
+
+
+
+\fi
+\chapter{Interplay of adversarial robustness and generalization}
+
+
+
+\section{Introduction}
+
+Although common machine learning algorithms achieve human-level performance in many tasks, when given out-of-distribution, domain-shifted, corrupted or slightly modified examples from the training data distribution, they can often make overconfident and incorrect predictions \citep{Hendrycks:2016:BDMOODE,Ganin:2015:UDAB,Nguyen:2015:DNNEFHCPUI,Hendrycks:2019:BNNRCCP,Engstrom:2017:RTSFCST,Szegedy:2013:IPNN}. Perhaps most surprisingly, by perturbing input examples (e.g. images) even inperceptibly for humans, common state-of-the-art algorithms can be made to significantly change their predictions both for examples from and outside of the training data distribution \citep{Szegedy:2013:IPNN, Goodfellow:2014:EHAE}. Such perturbed examples are called \textit{adversarial examples}. The existence of adversarial examples indicates that common algorithms are probably performing well for somewhat wrong reasons, without actually \textit{understanding data}.
+
+Although adversarial examples exist on other tasks, image classification algorithms with deep, mostly convolutional, models is the problem considered in most research on adversarial examples. In the following text, the problem of image classification will be considered mostly as well.
+
+Some evidence suggests that there is a trade-off between robustness and generalization \citep{Tsipras:2018:RMBOA,Madry:2017:TDLMRAA,Su:2018:IRTCOACSRDICM} with current algorithms, which is counter-intuitive because a hypothesis which optimally generalizes would have no adversarial examples. The question remains whether it is feasible or tractable with respect to computation or amount of data to implement such algorithms. A small but interesting step in this direction has been made by \citep{Stutz:2018:DARG}.
+
+A brief overview over a subset of the research on adversarial examples will be given with the goals of improving intuition and understanding of adversarial examples, understanding how robustness and generalization of deep models relate, and getting closer to knowing whether it is possible to improve both robustness and generalization on real-world datasets. 
+
+
+\section{Definitions and notation}
+
+To prevent some ambiguities, we define some basic machine learning concepts as they will be used here:
+\begin{itemize}
+	\item Hypothesis -- a mapping from inputs to predictions. A hypothesis will be denoted $h(\vec x)$ or $h(\vec x;\vec\theta)$, where $\vec x\in\set X$ is an input vector and $\vec\theta$ a fixed vector of model parameters. For discriminative models $h(\vec x)=\p(\rvar y\mid\vec x)$, where $\rvar y\mid\vec x$ is a conditioned random variable, short for $\rvar y\mid\rvec x=\vec x$. Random variables are underlined.
+	\item Model -- a set of hypotheses $\set H$ or a function $h$ defined up to some free parameters $\vec\theta$: $\set H=\cbr{\vec x\mapsto h(\vec x;\vec\theta)}_{\vec\theta}$.
+	\item Machine learning algorithm (short: algorithm) -- usually a model together with inductive bias and an objective function. %, and an optimization procedure.
+	\item Classifier -- a hypothesis that outputs a categorical distribution.
+	\item The true hypothesis -- the best hypothesis given knowledge of the true underlying distribution. Usually, it can be known only for synthetic data.
+	%\item Misprediction -- given some hypothesis and an example, a prediction of the hypothesis that differs from the true prediction.
+	\item Risk -- the expected error on the data distribution. For discriminative models it can often be expressed as
+	\begin{align}
+	R(h,\distrib D)\coloneqq\E_{(\vec x,y)\sim\distrib D}L(y, h(\vec x)) \text{,}
+	\end{align} where $L$ is the loss function, which is usually proportional to negative log-likelihood $\p(y\mid\vec x,\vec\theta)$.
+	\item Empirical risk -- the error on the empirical distribution $p_{\set D}$ (a uniform distribution over the set of observed examples $\set D$): $R_\text{E}(h,\set D)\coloneqq R(h,p_{\set D})$. The objective of a machine learning algorithm is to minimize a combination of empirical risk and structural risk, which usually represents the prior hypothesis probability of the hypothesis (parameters) $\p(\vec\theta)$.
+\end{itemize}
+
+
+Here are some common terms related to adversarial examples defined:
+\begin{itemize}
+	\item Attack -- an algorithm that generates adversarial examples.
+	\item Defense -- an idea used to make an algorithm resistant to adverarial examples.
+	\item Natural example -- an example from the distribution that the training data was sampled from.
+	\item Adversarial perturbation -- the difference between an adversarial example and the natural example it is based on. An adversarial example is based on some natural example iff it is found in its neighbourhood.
+	\item Targeted attack -- an attack with the goal that the hypothesis outputs some desired prediction.
+	\item Non-targeted attack -- an attack with the goal that the hypothesis outputs any misprediction.
+	\item Threat model -- a set of constraints on attacks. A defense should assume a threat model under which it is meant to work.
+	\item Adversarial robustness (short: robustness) -- either the performance of a hypothesis or algorithm under some threat model or how large a perturbations must be in order to turn natural examples into adversarial examples.
+	\item Adversarial training -- training that uses adversarial examples generated with an attack besides natural examples.
+	\item Standard training -- training that uses original examples from the training set without an attack.
+\end{itemize}
+Because an adversarial example can be defined in more ways, depending on the usefulness of the definition, and the definition is important for making precise conclusions, the definitions of an adversarial example will be discussed in section \ref{sec:adversarial-example-definitions}.
+
+
+\section{Adversarial example definitions} \label{sec:adversarial-example-definitions}
+
+A broadly accepted definition of an adversarial example is that it is \textit{an input designed to fool a hypothesis into producing a misprediction}. To make it more precise and useful, the "designed" part can be replaced with the constraint that adversarial examples are close to examples with correct predictions, which serves as a distinction between adversarial examples and examples far from decision boundaries with mispredicted labels causing standard generalization error. We get the following definition.
+\begin{definition}[adversarial example] \label{def:ae-consistent}
+	An adversarial example is an input for which the following holds:
+	\begin{enumerate}
+		\item It is close to an input with a correct prediction.
+		\item The hypothesis produces a misprediction.
+	\end{enumerate}
+\end{definition}
+By this definition, the set of adversarial examples is a function of the hypothesis, the true hypothesis, and a neighbourhood function.A misprediction can be defined via some distance between distributions and a threshold. In classification, a misprediction is usually defined as misclassification, i.e. the class with the highest predicted probability being different from true class.
+
+As will be explained, a more practical, but less consistent definition is the following. 
+\begin{definition}[practical adversarial example] \label{def:ae-practical}
+	A (practical) adversarial example is an input for which the following holds:
+	\begin{enumerate}
+		\item It is close to an input with a correct prediction.
+		\item The hypothesis produces a different prediction than for the input it is based on (the input from point 1).
+	\end{enumerate}
+\end{definition}
+Again, the difference between predictions can be defined via a distance between distributions.	
+In classification, predictions of a hypothesis being different usually means that the class with the highest probability differs.
+
+The difference from the first definition is that in the second definition knowledge of the true label is substituted with the prediction for the input with the correct prediction. This is useful for finding adversarial examples because all constraints can be known, but it is possible for a pair of natural examples differing in the label to have overlapping neighbourhoods and thus to be inside each other's neighbourhoods and thus be adversarial examples of each other. By the second definition, Even the true hypothesis can have adversarial examples close to decision boundaries. The first definition is more consistent in this sense, but then, knowing whether something is an adversarial example requires knowing the true hypothesis (i.e. it requires having solved the problem we are trying to solve with machine learning). In the following text, we will refer to the first definition as \textit{the consistent definition} and the second one as \textit{the practical definition}.
+
+There are also some different or broader definitions of adversarial examples. Some authors consider out-of-distribution examples producing high-confidence predictions \citep{Gal:2018:SCIMHNAETESBNN} or, most broadly, any inputs that fool the hypothesis \citep{Brown:2018:UAE}.
+
+
+\section{The manifold hypothesis}
+
+A useful assumption in many machine learning problems is that the distribution of high-dimensional data is approximately concentrated in low-dimensional manifolds \citep{Goodfellow:2016:DL}. A manifold can be described as a set of points related through neighourhoods that locally resembles a euclidean space. In machine learning, the term tends to be used loosely, usually denoting a connected set of points that can be approximated well with a small number of degrees of freedom, each corresponding to a local direction of variation, embedded in a higher-dimensional space. 
+\citep{Goodfellow:2016:DL} provide the following evidence. Firstly, the fact that the chance a natural example will be sampled from a simple distribution in a high-dimensional space is negligible indicates that the data distribution is highly concentrated. Secondly, we can imagine transformations that represent connections between similar examples and can be applied to traverse the manifold (e.g. for images). 
+
+One of the goals of generative models is often to model the data manifold with a lower-dimensional representation. This assumption provides useful intuition for generative models, dimensionality reduction, the understanding of adversarial examples, and some adversarial defenses.
+
+
+\section{Properties of adversarial examples}
+
+Here some properties, phenomena and hypotheses regarding adversarial examples are described, some of which are more or less supported by evidence. Besides the hypotheses described here, there is also a quite predictive and well suppoted by evidence -- the \textit{non-robust features} hypothesis \citep{Ilyas:2019:AENBTF,Tsipras:2018:RMBOA} described in section \ref{sec:robustness-generalization}, which might not be in contradiction with most of the hypotheses presented here. A broader overview can be found in e.g. \citet{Serban:2018:AECCP}.
+
+\paragraph{Rareness and closeness to natural examples} The existence of adversarial examples shows that near almost every input, there are misclassified inputs nearby. Evidence also shows that they are rare, i.e. they can not be easily found with random search in the neighbourhood of an natural example. This initially lead to the hypothesis that existence of adversarial examples is caused by high nonlinearity of deep models and that they are located in \textit{low-probability pockets} in the data manifold \citep{Szegedy:2013:IPNN}.
+
+\paragraph{Rareness of non-adversarial examples in the proximity of adversarial examples} \textcolor{red}{An adversarial example is unlikely to be turned into a non-adversarial example by applying a random perturbation to it. ??? Is this really true given randomized smoothing?}  % TODO
+
+\paragraph{Local linearity} However, \citet{Goodfellow:2014:EHAE} have found that it is usually enough to know the locally linear behaviour (gradient with respect to the input) to reliably generate adversarial examples along directions of increasing the linear approximation. This is visualized in figure \ref{fig:fgsm-adversarial-example}. They show that the direction of the perturbation matters more than the position in input space, evidencing against the low-probability pockets hypothesis. They suggest the \textit{linearity hypothesis} whereby high local linearity of models accounts for the existence of adversarial examples. Summing small perturbations in many elements of high-dimensional inputs can produce a large change in the prediction. \citet{Su:2017:OPAFDNN} have shown that even modifying only $1$ pixel can often be enough to cause a misclassification, indicating that models can be highly sensitive to some input elements. \citet{Tabacof:2016:ESAI} have found more evidence that adversarial examples span many-dimensional subsets in the input space.
+
+
+\begin{figure}[htbp!]
+	\centering
+	{\small
+		\begin{tabular}{>{\centering\arraybackslash}m{.22\columnwidth}m{.1in}>{\centering\arraybackslash}m{.22\columnwidth}m{.05in}>{\centering\arraybackslash}m{.22\columnwidth}}
+			\centering\arraybackslash
+			%abs max for panda was 138, eps was 1., so relative eps is ~.007
+			\includegraphics[width=.22\columnwidth]{adversarial-examples/panda_577.png} &%
+			\centering\arraybackslash%
+			$\centering +\ \epsilon \cdot$ &%
+			\includegraphics[width=.22\columnwidth]{adversarial-examples/nematode_082.png} &%
+			$\centering =$ & %
+			\includegraphics[width=.22\columnwidth]{adversarial-examples/gibbon_993.png} \\
+			$\centering \vec x$     &%
+			& $\sgn\del{\nabla_{\vec x} L(y,h(\vec x))}$ & & $\tilde{\vec x}$ \\
+			\emph{panda} (0.577) & & & & \emph{gibbon} (0.993) 
+		\end{tabular}
+	}
+	\caption{Generation of an adversarial example with FGSM, a single step attack. Italic words and numbers represent classes and confidences. The images are from \citet{Goodfellow:2014:EHAE}.}
+	\label{fig:fgsm-adversarial-example}
+\end{figure}
+
+\paragraph{Transferability} An interesting property is that adversarial examples generated for one model are often misclassified by other models and models trained on different datasets, i.e. they generalize across models and datasets \citep{Szegedy:2013:IPNN}. This property of adversarial examples is called transferability. This suggests that most state-of-the art deep models are similarly biased. More analysis of transferebility can be found in \citet{Papernot:2016:TMLPBBAAS,Liu:2016:DTAEBBA,Tramer:2017:STAE}. 
+
+\paragraph{Universal perturbations} \citet{Moosavi-Dezfooli:2016:UAP} have observed that there exist perturbations that can reliably produce adversarial examples when added to almost any input and hypothesize that they exploit geometric correlations between different parts of decision boundaries. 
+
+\paragraph{Boundary tilting} \citet{Tanay:2016:ABTPPAE} hypothesize that adversarial examples exist when the decision boundary lies close to the submanifold of sampled data. They suggest that adversarial examples might be occurring along low-variance directions of the data where it is close to the manifold and that robustness could be improved with regularization. This is illustrated in figure \ref{fig:tanay-boundary-tilting}.
+
+\begin{figure}[htbp!]
+	\begin{center}
+		\includegraphics[width=\columnwidth]{figures/adversarial-examples/tanay-newPerspective.pdf}
+	\end{center}
+	\caption{An illustration of boundary tilting from \citet{Tanay:2016:ABTPPAE}.}
+	\label{fig:tanay-boundary-tilting}
+\end{figure}
+
+\paragraph{High-dimensional space manifold geometry} \citet{Gilmer:2018:AS} hypothesize that the existence of adversarial examples could be a naturally occurring result of the geometry of high-dimensional data manifolds. For a simple dataset with two classes consisting of examples from a pair of high-dimensional concentric spheres, they have observed that most random points in the data distribution are both correctly classified and close to a misclassified point. The authors have also given negative evidence on the hypothesis that adversarial examples are off the data manifold by showing that \textit{on-manifold} adversarial examples can exist as well.
+
+\paragraph{Adversarial examples of generative models} Adversarial examples are not just a phenomenon related to discriminative models. They have been found to exist for some generative models as well \citep{Goodfellow:2014:EHAE,Kos:2018:AEGM}. An example is shown in figure \ref{fig:vae-gan-targetad-face}.
+
+\begin{figure}[htbp!]
+	\begin{center}
+		\raisebox{-0.5\height}{\includegraphics[scale=0.6]{figures/adversarial-examples/kos-exp11-faces-summary.png}}
+		~
+		\raisebox{-0.5\height}{\includegraphics[scale=0.075]{figures/adversarial-examples/kos-exp11-faces-target-reconstruction.png}}
+	\end{center}
+	\caption{Reconstruction outputs for targeted attacks on a VAE-GAN model from \citet{Kos:2018:AEGM}. The rows represent of original image reconstructions (top), reconstructions of adversarial examples generated using an attack in latent space (middle) and a VAE-loss attack (bottom). The target reconstruction is on the right.}
+	\label{fig:vae-gan-targetad-face}
+\end{figure}
+
+%\paragraph{Adversarial reprogramming.}
+
+\paragraph{True ambiguity of adversarial examples of robust classifers}
+Qualitative assesment of adversarial examples of robust classifiers suggest that they \textit{understand data} much better. Their adversarial examples really are ambigous, i.e. generated perturbations don't look like noise but are semantically meaningful to humans \citep{Tsipras:2018:RMBOA,Li:2019:AGCMRAA}.  This is illustrated in figures \ref{fig:tsipras-robust-adversarial-examples} and \ref{fig:li-gfz-adversarial-examples-mnist}. An interesting observation is that adversarially trained discriminative classifiers together with an iterative attack can interpolate between and generate quite realistic examples. \citet{Tsipras:2018:RMBOA} suggest a connection between the the saddle point problem of adversarial training and GAN training \citep{Goodfellow:2014:GAN}.
+
+\begin{figure}[htbp!]
+	\begin{center}
+		\includegraphics[width=0.85\columnwidth]{figures/adversarial-examples/tsipras-turtle-bird-cat-dogs}
+	\end{center}
+	\caption{Original images and adversarial examples generated with a large perturbation using an iterative non-targeted attack on an adversarially trained Restricted ImageNet \citep{Tsipras:2018:RMBOA} classifier from \citet{Tsipras:2018:RMBOA}.}
+	\label{fig:tsipras-robust-adversarial-examples}
+\end{figure}
+
+\begin{figure}[htbp!]
+	\begin{center}
+		\raisebox{-0.5\height}{\includegraphics[scale=0.65]{figures/adversarial-examples/li-data_clean.png}}
+		\
+		\raisebox{-0.5\height}{\includegraphics[scale=0.65]{figures/adversarial-examples/li-bayes_A_cw_adv.png}}
+	\end{center}
+	\caption{Clean images (left) and adversarial examples generated using an iterative non-targeted attack on a generative MNIST \citep{LeCun:2015:DL} classifier with the factorization $\p(\vec z)\p(\vec y\mid\vec z)\p(\vec x\mid\vec z,\vec y)$ (right) from \citet{Li:2019:AGCMRAA}. The adversarial examples marked in green are successful.}
+	\label{fig:li-gfz-adversarial-examples-mnist}
+\end{figure}
+
+Further interesting phenomena and hypotheses related to the nature of adversarial examples, adversarial robustness and generalization will be discussed in section \ref{sec:robustness-generalization}.
+
+\paragraph{\textcolor{red}{Adversarial reprogramming}}  % TODO
+
+
+\section{Finding adversarial examples} \label{sec:finding-adversarial-examples}
+
+Let $\set X$ be the input space,
+and $d\in(\set X\times\set X\to \R^+)$ a \textit{distance function} for definining similarity between inputs. 
+For each example $\vec x$, 
+we can also define its \textit{neighbourhood} as $B_{\epsilon}(\vec x) = \cbr{\vec x'\colon d(\vec x', \vec x) \leq \epsilon}$,
+where $\epsilon$ is the maximum distance from the example.
+
+Ideally, the neighbourhood of an example $\vec x$ should be the set of \textit{perceptually similar} examples that all belong to the same class as $\vec x$ (their true class may be at most ambiguous), but it is hard to define such a neighbourhood (as it requires knowing the true model). A practical and common way of defining the neighbourhood function for images is to have $d$ be a $L^p$ distance where $p$ is usually $\infty$ or $2$. Note that, if an example is very near the true class boundary, such a neighbourhood may contain examples belonging to another class. 
+
+\subsection{Attack objectives}
+
+Finding an adversarial example can be defined as a constrained optimization problem of maximizing some loss with respect to the input with the constraint that the input is in the neighbourhood $B_\epsilon(\vec x)$:
+\begin{align}
+\tilde{\vec x} = \argmax_{\vec x'\in B_\epsilon(\vec x)} L(y, h(\vec x')) \text{,} \label{eq:non-targeted-loss-attack}
+\end{align}
+where $y$ is the true label. Let $\hat{h}(\vec x) \coloneqq \argmax_{y} h(\vec x)_\ind{y}$ denote the function that assigns the label with the highest probability to an input.
+An objective can also be to find the $\tilde{\vec x}$ closest to $\vec x$ such that the classifier misclassifies it \citep{Moosavi-Dezfooli:2016:DFSAMFDNN}:
+\begin{align}
+\tilde{\vec x} = \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x') \neq y} d(\vec x', \vec x) \text{.} \label{eq:non-targeted-closest-attack}
+\end{align}
+
+The described objectives, where it only matters that the adversarial example is misclassified, are objectives for \textit{non-targeted adversarial attacks}. There are also \textit{targeted adversarial attacks}, where the objective is to create an adversarial example such that the model classifies it as some desired target. Targeted attack objectives corresponding to equations \eqref{eq:non-targeted-loss-attack} and \eqref{eq:non-targeted-closest-attack} are:
+\begin{align}
+\tilde{\vec x} &= \argmin_{\vec x'\in B_\epsilon(\vec x)} L(y_\text{a}, h(\vec x')) \text{,} \label{eq:targeted-loss-attack} \\
+\tilde{\vec x} &= \argmin_{\vec x'\colon \vec x'\in B_\epsilon(\vec x) \land \hat{h}(\vec x') = y_\text{a}} d(\vec x', \vec x) \text{,} \label{eq:targeted-closest-attack}
+\end{align}
+where $y_\text{a}$ denotes the adversarial target label. The difference in equation \eqref{eq:targeted-loss-attack} is loss minimization and the adversarial target label instead of the true label. The difference in equation \eqref{eq:targeted-closest-attack} is the condition that the predicted labels equals the adversarial target instead of differing from the true label.
+
+non-targeted adversarial examples can also be generated without knowledge of the true label. Instead of the true label $y$, the predicted label $\hat{h}(\vec x)$ can be used in equations \eqref{eq:non-targeted-loss-attack} and \eqref{eq:non-targeted-closest-attack}. Such adversarial examples are called \textit{virtual adversarial examples}.
+\citet{Miyato:2017:VATRMSSSL} propose the following attack objective for use in semi-supervised learning:
+\begin{align}
+\tilde{\vec x} = \argmin_{\vec x'\in B_\epsilon(\vec x)} D((\rvar y\mid \vec x, \vec\theta), (\rvar y\mid \rvec x = \vec x', \vec\theta)) \text{,}
+\end{align}
+where $D$ is some non-negative function that represents distance between distributions.
+
+For adversarial training, non-targeted attacks should be preferred due to the \textit{label-leaking} phenomenon \citep{Kurakin:2016:AMLS} where the learned classifier can overfit to adversarial examples and perform better on them than on natural examples, especially with attacks with a small number of iterations. For robustness evaluation with datasets that have many similar classes, non-targeted attacks can too easily fool the classifier and targeted attacks give more meaningful evaluation results \citep{Athalye:2018:OGGFSS}.
+
+\subsection{Common attacks}
+
+Being that finding adversarial examples is a constrained optimization problem, general gradient-based and black-box optimization algorithms can be used for attacks. Additionally, sometimes techniques specific to some potential defense and machine learning algorithm have to be used.
+
+Some commonly known gradient-based attacks for finding adversarial examples are the following (using the notation from section \ref{sec:finding-adversarial-examples}):
+\begin{itemize}
+	\item Box-constrained L-BFGS -- \citet{Szegedy:2013:IPNN} propose to minimize $c\enVert{\vec x -\tilde{\vec x}}_2^2+L(y,h(\tilde{\vec x}))$ with the constraint $\tilde{\vec x}\in\intcc{0,1}$ with L-BFGS, a quasi-Newton optimization method. $c$ is a number obtained via line-search that yields adversarial examples of minimum distance.
+	\item Fast gradient sign method (FGSM) -- an attack proposed by \citet{Goodfellow:2014:EHAE} that requires a single gradient computation:
+	\begin{align}
+	\tilde{\vec x} = \vec x + \epsilon\nabla_{\vec x} L(y,h(\vec x)) \text{,}
+	\end{align} 
+	where $\epsilon$ is the $L^\infty$-norm of the perturbation. For $L^2$-constrined perturbations, \citet{Miyato:2017:VATRMSSSL} propose $L^2$ normalization instead of the sign function.
+	\item DeepFool -- an iterative non-targeted attack proposed by \citet{Moosavi-Dezfooli:2016:DFSAMFDNN} that in each step finds the optimal solution to a linear approximation of a loss in the $L^2$ ball $B_\epsilon(\vec x)$ using the gradient in the current adversarial input. It is faster and finds smaller perturbations than L-BFGS and stronger than FGSM.
+	\item Projected gradient descent (PGD) \citep{Madry:2017:TDLMRAA} basic iterative method (BIM) \citep{Kurakin:2016:AEPW} -- an iterative gradient-based algorithm with random initialization \citep{Madry:2017:TDLMRAA} of the perturbation from within the $B_\epsilon(\vec x)$ at the start and steps in the direction of the gradient sign:
+	\begin{equation} \label{eq:pgd}
+	\tilde{\vec x}_i = \Pi_{B_\epsilon(\vec x)} \del{\tilde{\vec x}_{i-1} + \alpha\sgn\del{\nabla_{\tilde{\vec x}_{i-1}} L(y,h(\tilde{\vec x}_{i-1}))}} \text{.}
+	\end{equation}
+	$\alpha$ is the step size, and $\Pi_{B_\epsilon(\vec x)}$ is the projection into the $L^p$ $\epsilon$-ball around $\vec x$.
+	\item Carlini-Wagner (CW) attacks -- \citet{Carlini:2017:TERNN} propose attacks with similar minimal perturbation objectives as \citet{Szegedy:2013:IPNN} and \citet{Moosavi-Dezfooli:2016:DFSAMFDNN}. They modify the loss function and, to enable unconstrained optimization, they introduce change of variables $\vec\delta=\frac{1}{2}\del{\tanh\del{\vec w} + \cvec 1} - \vec x$, which limits the perturbation $\vec\delta$ to the interval $\intcc{0,1}$. With the PGD (BIM) attack, it is currently probably one of the 2 strongest attacks.
+\end{itemize}
+
+
+\section{Improving adversarial robustness}
+
+There are different approaches (\textit{defenses}) trying to improve adversarial robustness, most of which have been shown to actually be non-robust, but had appeared robust because they intentionally or unintentionally caused attacks that they were evaluated on not to be able to find adversarial examples \citep{Carlini:2017:AEANEDBTM,Athalye:2018:OGGFSS,Uesato:2018:ARDEAWA,Carlini:2017:TERNN}.  Thus, it is important to put as much effort as needed to correctly evaluate robustness, i.e. get an as low as possible upper bound on robustness. \citep{Carlini:2019:OEAR} is a recent helpful overview on evaluation of robustness. 
+
+A broad overview of many defenses can be found in \citet{Serban:2018:AECCP}. To give a few examples, some approaches use generative models to approximately project inputs to a learned data manifold (e.g. \citet{Samangouei:2018:DGPCAAAUGM}), some approaches are based on limiting the Lipschitz constant of the model to limit sensitivity to small input perturbations by regularization and model modification (e.g. \citet{Qian:2018:L2NNN}), some research is looking into ways of guaranteeing robustness (e.g. \citet{Cohen:2019:CARRS}).
+
+\subsection{Adversarial training and empirical adversarial risk}
+
+The only defense currently believed to be effective according to \citet{Athalye:2018:OGGFSS} is adversarial training \citep{Goodfellow:2014:EHAE} with a strong attack \citep{Madry:2017:TDLMRAA}, where the model is trained on adversarial examples as well as natural examples.
+
+\citet{Madry:2017:TDLMRAA} define what can be called \textit{empirical adversarial risk} by allowing the worst-case attack to modify each the input in the empirical risk expression:
+\begin{align}
+R_\text{EA}(h,\set D) \coloneqq \E_{(\vec x, y)\sim p_{\set D}} \del{\max_{\tilde{\vec x}\in B_\epsilon(\vec x)} L(y,h(\tilde{\vec x}))} \text{.}
+\end{align}
+They propose PGD for the attack during training and PGD with as large a number of iterations as necessary to approximate the worst-case adversary, i.e. get a better upper bound on robustness.
+
+Still, adversarially trained models are not robust to attacks with weaker constraints than those used for training \citep{Schott:2018:TDFARNNMM}. Furthermore, because adversarial examples are generated and robustness is evaluated according to the practical definition of an adversarial example and using $L^p$ distance as a non-ideal approximation of perceptual similarity, performance is affected \citep{Madry:2017:TDLMRAA,Tsipras:2018:RMBOA} and there can exist misclassified examples among which are \textit{invariance-based} adversarial examples \citep{Jacobsen:2019:EEICNBAR}.
+
+%Empirical and theoretical results show that improving robustness seems to be a problem that requires more model capacity and causes a reduction of performance on natural data \citep{Madry:2017:TDLMRAA,Tsipras:2018:RMBOA}.
+
+
+\section{Adversarial robustness and generalization} \label{sec:robustness-generalization}
+
+Based on the practical definition of an adversarial example or similar definitions, experimental \citep{Madry:2017:TDLMRAA,Su:2018:IRTCOACSRDICM} and theoretical evidence \citep{Tsipras:2018:RMBOA} suggests that there is a trade-off between robustness and standard generalization for current models.
+
+Here are some recent discoveries related to adversarial robustness and generalization presented. Robustness to distributional shift and corruptions also seems to be quite relevant \citep{Gilmer:2019:AENCTEN,Hendrycks:2019:BNNRCCP}, but it will not be discussed here.
+
+\subsection{A trade-off between robustness and generalization}
+
+\citet{Madry:2017:TDLMRAA,Su:2017:OPAFDNN,Tsipras:2018:RMBOA} and others have empirically observed that adversarial robustness with current algorithms requires more capacity and negatively affects generalization. \citet{Su:2017:OPAFDNN} have observed that older convolutional architectures with no shortcut connections, like AlexNet \citep{Krizhevsky:2012:ICDCNN} and VGG \citep{Simonyan:2014:VDCNLSIR} seem to be inherently more robust than architectures like ResNet \citep{He:2015:DRLIR}, DenseNet \citep{Huang:2016:DCCN} and MobileNet \citep{Howard:2017:MECNNMVA} and NASNets \citep{Zoph:2018:LTASIR} with standard training. \citet{Madry:2017:TDLMRAA} has observed that with adversarial training, more model capacity is required and natural test set performance is reduced. Furthermore, \citet{Tsipras:2018:RMBOA} have, based on the practical definition of an adversarial example, theoretically demonstrated an aspect of the trade-off. Another reason that affects performance suggested by them is that salient features might be harder to learn and that algorithms rely on highly predictive but \textit{non-robust} features.
+
+\subsection{Non-robust features}
+
+Based on some ideas from \citet{Tsipras:2018:RMBOA},  \citet{Ilyas:2019:AENBTF} propose an interesting and experimentally well supported hypothesis on the nature of features that well-generalizing non-robust classifiers learn. They show that existence of adversarial examples can be directly attributed to existence of  non-robust features, "features derived from patterns in the data that are highly predictive but brittle and incomprehensible to humans". 
+
+They demonstrate the predictiveness of non-robust features by: 
+\begin{enumerate}
+	\item constructing a dataset $\set D_\text{NR}$ where approximately the only useful features are non-robust features by turning inputs of the original dataset $\set D$ into adversarial examples for a classifier that was trained standardly and relabeling them with the adversarial label,
+	\item training a new classifier on the non-robust dataset $\set D_\text{NR}$,
+	\item testing the new classifier on the original test set where it achieves performance close to the original classifier and lower robustness.
+\end{enumerate}
+
+In another experiment, they try to remove non-robust-features from inputs with the help of an adversarially trained classifier. A new classifier trained on the dataset with removed non-robust features achieves a bit lower performance and robustness not as high as the adversarially trained classifier but quite significant compared to the standardly trained classifier. Results of these experiments with the CIFAR-10 dataset \citep{Krizhevsky:2009:LMLFTI} are shown in figure \ref{fig:iliyas-experiment-results}.
+
+\begin{figure*}[htbp!]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=1.0\textwidth]{figures/adversarial-examples/ilyas/cifar_datasets.pdf}
+		\vfill\null
+		\caption{}
+		\label{fig:robust_inputs}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{figures/adversarial-examples/ilyas/CIFAR_res.pdf}
+		\caption{}
+		\label{fig:robustify_cifar}
+	\end{subfigure}
+	\caption{
+		(a) Random samples from variants of the
+		CIFAR-10 training set:
+		the original training set; 
+		the \textit{robust training set} $\set D_\text{R}$, restricted to features used by a
+		robust model; and
+		the \textit{non-robust training set} $\set D_\text{NR}$, restricted to
+		features relevant to a standard model (labels appear incorrect to humans).
+		(b) Standard and robust accuracy on the CIFAR-10
+		test set ($\set D$) for models trained with standard training, adversarial training, and standard training on datasets $\set D_\text{R}$ (robust) and $\set D_\text{NR}$ (non-robust). Adapted from \citet{Ilyas:2019:AENBTF}.}
+	\label{fig:iliyas-experiment-results}
+\end{figure*}
+
+\subsection{Training with on-manifold adversarial examples}
+
+\citet{Stutz:2018:DARG} challenge the hypothesis that there is a trade-off between robustness and generalization. They hypothesize that most adversarial examples come from directions orthogonal to the learned class manifolds and that training adversarial examples (as per a definition similar to definition \ref{def:ae-consistent}) limited to the known or learned class manifolds (on-manifold adversarial examples) can improve generalization. They conduct experiments with a synthetic dataset with known class-invariant transformations and datasets with small images that support the hypothesis that generalization can be improved with adversarial training with on-manifold adversarial examples.
+
+Class manifolds to which adversarial examples are restrited and on-manifold and off-manifold adversarial examples are illustrated in figure \ref{fig:stutz-illustration}.
+
+\begin{figure}[htbp!]
+	\begin{center}
+		\includegraphics[width=\columnwidth]{figures/adversarial-examples/stutz-introduction_b.pdf}
+	\end{center}
+	\caption{An illustration by \citet{Stutz:2018:DARG} of class manifolds (classes "5" and "6") with a regular (off-manifold) adversarial example and an on-manifold adversarial example.}
+	\label{fig:stutz-illustration}
+\end{figure}
+
+In one of the experiments \citet{Stutz:2018:DARG} construct a synthetic dataset with a known manifold (geometric transformations of letters) in order to be able to generate exactly on-manifold adversarial examples by modifying parameters of the geometric transformations. With this dataset, they succeed in improving generalization and on-manifold robustness\footnote{By the authors' definition of an adversarial example, which is similar to the consistent definition (definition \ref{def:ae-consistent}), except for that there is no closeness constraint, making it equivalent to the definition of a misclassified example, on-manifold robustness essentially boils down to generalization.} with adversarial training.
+
+In other experiments they use EMNIST \citep{Cohen:2017:EMNIST}, FashionMNIST \citep{Xiao:2017:FMNIDBMLA} and CelebA \citep{Liu:2015:DLFAW}. In order to better approximate class manifolds and disable leaving the manifold of a class when an adversarial example is generated for adversarial training, they first train one variational autoencoder (VAE-GAN) per class. They perform training and evaluation analogously to the experiment with synthetic data by allowing the attack to perturb the latent representation of the autoencoder corresponding to the correct class. They measure positive correlation between robustness to on-manifold adversarial examples and generalization. They observe worse quality of on-manifold adversarial examples for the more complex dataset CelebA due to worse approximation quality of their VAE-GAN-s.
+
+
+\section{Conclusion}
+
+This paper presents an overview of ideas related to the existence adversarial examples, hypotheses on their existence and some of their properties. It describes general principles regarding adversarial attacks, defenses and robustness evaluation and presents examples of such algorithms. Finally, some recent discoveries and hypotheses regarding the relation between robustness and generalization are explored. Some recent results \citep{Stutz:2018:DARG} suggest that finding ways of improving both robustness generalization might be an interesting research direction to explore.
+
+
+
+
+\chapter{Kompromis između generalizacije i robusnosti kod dubokih modela za razumijevanje slika}
+
+
+
+\section{Uvod}
+
+
+
+\section{Osnovni pojmovi}
+
+\subsection{Osnovne oznake}
+
+\paragraph{Varijable.} Varijable su nakošene, a konstante uspravne. Vektori se označavaju malim podebljanim slovima ($\vec a$), matrice i višedimenzionalni nizovi velikim podebljanim slovima ($\vec A$), a skupovi slovima s udvostručenim linijama ($\set A$). Slučajne varijable su podvučene ($\rvar a$).
+
+\paragraph{Nizovi.} $\sbr{x_1,\bidot, x_n}$ je vektor redak, $a\bidot b$ i $a:b$ su kraći zapisi za $a,..,b$. Redni brojevi elemenata vektora ili višedimenzionalnih nizova se pišu uglatoj zagradi u donjem indeksu. Npr. $i$-ti element vektora $\vec a=\sbr{a_1,.., a_n}^\tp$ je $\vec a_\ind{i}=a_i$,
+$\vec{a}_\ind{i_1:i_2}$ je vektor koji čine elementi $\vec{a}_\ind{i_1},.., \vec{a}_{\sbr{i_2}}$,
+$\vec{A}_\ind{i,j}$ je element, a $\vec{A}_\ind{i,:}$ redak matrice.
+
+\paragraph{Linearna algebra.}
+$\braket{\vec a}{\vec b}$ ili $\vec{a}^\tp\vec{b}$ je skalarni produkt, $\vec{a}\vec{b}^\tp$ vanjski produkt, $\vec a \odot \vec b$ umnožak po elementima, 
+$\vec a \oslash \vec b$ dijeljenje po elementima, $\diag\del{\vec{a}}$ dijagonalna matrica kojoj dijagonalu čini $\vec a$, 
+$\vecfunc(\vec A)$ predstavljanje niza vektorom.
+
+\paragraph{Diferencijalni račun.} $\tpd{y}{x}=\tpd{}{x}f(x)$ je parcijalna derivacija $y=f(x)$ po $x$
+$\nabla_{\vec x}{y}=\nabla_{\vec x}{f(x)}=\del{\tpd{y}{\vec x}}^\tp$	
+gradijent,
+$\tpd{\vec y}{\vec x}=\vec J_{f}(\vec x)$ Jakobijeva matrica iz $\R^{m\times n}$ za $\funcdef{f}{\R^n}{\R^m}$, a 
+$\int_{\set A}f(x)\dif x=\int_{x\in\set A}f(x)$
+određeni integral.
+
+\paragraph{Vjerojatnost.} Svakoj slučajnoj varijabli $\rvar a$ jednoznačno je dodijeljena jedna razdioba $\p(\rvar a)$ (ili $\P(\rvar a)$) i funkcija gustoće vjerojatnosti (koja može biti poopćena funkcija) $p_{\rvar a}(a)=\p(\rvar a=a)$. $\P(A)$ označava vjerojatnost događaja $A$, a $P_{\rvar a}$ funkciju vjerojatnosti slučajne varijable $\rvar a$. Mogući su i kraći zapisi $\p(a)$ i $\P(a)$, gdje se po slovu koje označava vrijednost pretpostavlja slučajna varijabla označena istim slovom bez serifa. Mogu se koristiti i druge oznake za funkciju vjerojatnosti ili funkciju gustoće vjerojatnosti. Još neki primjeri su: $(\rvar a\mid\rvar b= b)$ ili $(\rvar a\mid b)$ je uvjetna slučajna varijabla, $(\rvar a,\rvar b)$ združena slučajna varijabla,$\P(\rvar a),\,\p(\rvar b),\,\mathcal{D}$ razdiobe, 
+$\rvar a \sim q$ oznaka da slučajna varijabla $\rvar a$ ima razdiobu $q$, $a\sim q$ oznaka da je $a$ uzorak iz razidiobe $q$,
+$\E_{a\sim\rvar a} f(a)$ ili $\E_{\rvar a} f(a)$ očekivanje funkcije slučajne varijable $\rvar a$, $\D_{a\sim\rvar a} f(a)$ ili $\D_{\rvar a} f(a)$ disperzija (varijanca),  $\mathcal{N}(\mu, \sigma^2)$ normalna razdioba s učekivanjem $\mu$ i varijancom $\sigma^2$, 
+$\mathcal{U}(\set A)$
+uniformna razdioba nad skupom $\set A$.
+
+\paragraph{Teorija informacije.}
+$\H(\rvar a)$ je entropija, 
+$\h(\rvar a)$
+diferencijalna entropija, 
+$\I(\rvar a,\rvar b)$
+uzajamna informacija, 
+$\H(\rvar a\mid\rvar b)$ 
+uvjetna entropija, 
+$\H_{\rvar b}(\rvar a)$ 
+unakrsna entropija, 
+$\Dkl{\rvar a}{\rvar b}$ 
+Kullback-Leiblerova divergencija (relativna entropija).
+
+\paragraph{Ostalo.}
+$\cvec 0$ je nul-vektor, $\cvec e_i$ $i$-ti vektor kanonske baze, $\cvec 1$ zbroj svih vektora kanonske baze, a $\cvec I$ matrica identiteta.
+$\set A\to\set B$ je skup funkcija s domenom $\set A$ i kodomenom $\set B$, $x\mapsto g(x)$ funkcija koja preslikava $x$ u $g(x)$, $\envert{\set A}$ kardinalitet skupa, $\enbbracket{\cdot}$
+Iversonovu zagrada za koju vrijedi $\enbbracket{P}\coloneqq\begin{cases} 1, & P \equiv \top, \\ 0, & P \equiv \bot \end{cases}$. 
+
+
+
+\subsection{Nadzirano učenje}
+
+\subsubsection{Kapacitet, podnaučenost i prenaučenost}
+
+\subsubsection{Rizik i funkcija pogreške}
+
+
+\subsection{Duboko učenje i konvolucijski modeli}
+
+\subsubsection{Duboki unaprijedni modeli}
+
+\subsubsection{Učenje}
+
+\paragraph{Algoritam propagacije pogreške unatrag}
+
+\paragraph{Stohastička optimizacija}
+
+\paragraph{Problemi i poboljšavanje učenja i generalizacije}
+
+\subsubsection{Konvolucijski modeli}
+
+\paragraph{Konvolucija}
+
+\paragraph{Konvolucijski sloj}
+
+\paragraph{Sažimanje}
+
+
+
+\section{Neprijateljska robusnost i neprijateljski primjeri}
+
+
+
+\section{Osnovne definicije i oznake u vezi neprijateljskih primjera}
+
+
+
+\section{Svojstva neprijateljskih primjera kod dubokih modela}
+
+
+
+\section{Pronalaženje neprijateljskih primjera}
+
+
+
+\section{Robusnost i generalizacija}
+
+
+\subsection{Postizanje robusnosti}
+
+
+\subsection{Kompromis između robusnosti i generalizacije}
+
+
+
+\section{Eksperimenti}
+
+
+\subsection{Postizanje robusnosti}
+
+
+\subsection{Smanjivanje kompromisa između robusnosti i generalizacije kod klasifikacije slika}
+
+
+\subsection{Robusno učenje modela za semantičku segmentaciju}
+
+
+
+\section{Zaključak}
+
+
+
+
+\chapter{Pieces of text}
+
+%Adversarially robust generalization requires
+%more data show 
+%
+%distilling knowledge into a small dataset
+
+%With some reasonable assumptions about the model, as the model approaches the true model (in robustness/), its (/on-manifold) adversarial examples would be becoming more close to the true decision boundary, i.e. truly more ambigous (/more often actually changing the class). The true model has no on-manifold adversarial examples, but it might not be defined for off-manifold examples, e.g. if it is a discriminative model.
+
+
+
+\newpage
+
+\subsection{Robustness evaluation}
+
+\citet{Athalye:2018:OGGFSS} state that, if there are classes that are very similar, using targeted attacks for robustness evaluation can give more meaningful results. 
+
+stronger attack targeted, stronger evaluation untargeted
+
+\subsubsection{Adversarial training}
+
+\citet{Kurakin:2016:AMLS} note that by using the true label in the loss in untargeted attacks ($y$ in equation \eqref{eq:untargeted-loss-attack}) can cause
+
+
+\newpage
+.
+\newpage
+\subsubsection{Distance metrics for images}
+
+Usually, an $L^p$ distance ($d(\vec x', \vec x)=\lVert\tilde{\vec x}-\vec x\rVert_p$) is used as a distance metric for adversarial examples.
+
+\paragraph{Scale-invariant norms.}
+Let $\vec x$ denote some image (or perturbation) and $\vec x_\lambda$ the same image with dimensions scaled by $\lambda$. $\vec x_\lambda$ has a greater norm because it contains $\lambda^2$ the number of pixels of the original image and every pixel is approximately effectively repeated $\lambda^2$ times. In terms of $\enVert{\vec x}_p$, its norm can be approximated like this:
+\begin{align*}
+\enVert{\vec x_\lambda}_p 
+&= \del{\sum_{u\in\cbr{0\bidot\lambda H}}\sum_{v\in\cbr{0\bidot\lambda W}} \envert{{\vec x_\lambda}_\ind{u, v}}^p}^{\frac{1}{p}} && \text{(norm definition)} \\
+&\approx \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \lambda^2 \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} && \text{($\lambda^2$ element copies)} \\
+&= \lambda^\frac{2}{p} \del{\sum_{u\in\cbr{0\bidot H}}\sum_{v\in\cbr{0\bidot W}} \envert{{\vec x}_\ind{u, v}}^p}^{\frac{1}{p}} \\
+&= \lambda^\frac{2}{p} \enVert{\vec x}_p \text{.} && \text{(norm definition)}
+\end{align*}
+
+If there is a perturbation in $2$ different resolutions, the higher-resolution one will have a greater norm by approximately a factor of $(\lambda^2)^\frac{1}{p}$, especially if the perturbations don't have too high spatial frequencies. Hence, scale invariant equivalents of $L^p$ norms can be defined by dividing the norm by the scale factor. If we choose the scale factor to be relative to the scale of an image with area $1$, $\lambda^2$ is $n$, the total number of pixels. 
+
+We can define \textbf{scale-invariant norms} like this:
+\begin{align}
+\mathrm{m}_p(\vec x) \coloneqq n^{-\frac{1}{p}}\enVert{\vec x}_p, \label{eq:scale-invariant-norm}
+\end{align}
+This can also be expressed as the \textbf{generalized mean} $\mathrm{M}_p$ (also known as \textbf{power mean}) of the elementwise absolute value:
+\begin{align}
+\mathrm{m}_p(\vec x) = \mathrm{M}_p(\envert{\vec x}) \coloneqq \del{\frac{1}{n}\sum_i  \envert{\vec x_\ind{i}}^p}^{\frac{1}{p}}. \label{eq:generalized-mean}
+\end{align}
+Such norms could probably be useful for comparison of norms between different-resolution images and different datasets, and hyperparameter choice for adversarial attacks.
+
+Maybe something similar could be done about objects of different scale?
+
+...
+
+\paragraph{Expectation of scale-invariant norms uniformly distributed random vectors.}
+Let $\rvec x_n$ be a random vector with $n$ independent elements ${\rvec x_n}_\ind{i}\sim\mathcal{U}\del{\intcc{-\epsilon,\epsilon}}$.
+
+An easy special case is when $p=1$:
+\begin{align*}
+\E\sbr{\mathrm{m}_1(\rvec x_n)}
+= \E\sbr{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}}
+= \E\sbr{\envert{{\rvec x_n}_\ind{i}}}  
+= \frac{\epsilon}{2} \text{.}
+\end{align*}
+
+For very large $n$, we can approximate it like this:
+\begin{align*}
+\lim_{n\to\infty} \E \sbr{\mathrm{m}_p(\rvec x_n)}
+&= \E\sbr{\lim_{n\to\infty}\del{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}^p}^\frac{1}{p}} &&\text{(dominated convergence)} \\
+&= \E\sbr{\E\sbr{\envert{{\rvec x_n}_\ind{0}}^p}^\frac{1}{p}} &&\text{(IID elements)}  \\
+&= \E\sbr{\envert{{\rvec x_n}_\ind{0}}^p}^\frac{1}{p} &&\text{(redundant expectation)}  \\
+&= \frac{1}{2\epsilon} \del{\int_{-\epsilon}^{\epsilon}\envert{x}^p\dif x}^\frac{1}{p} &&\text{(definition of expectation)}  \\	
+&= \frac{1}{\epsilon}\del{\int_{0}^{\epsilon}x^p\dif x}^\frac{1}{p} &&\text{(absolute value symmetry)}  \\	
+&= \frac{1}{\epsilon}\del{\frac{\epsilon^{p+1}}{p+1}}^\frac{1}{p} \text{.} \numberthis\label{eq:power-norm-n-infinity}
+\end{align*}
+Specially, for $\epsilon=1$, it evaluates to 
+\begin{align}
+\lim_{n\to\infty} \E \sbr{\mathrm{m}_p(\rvec x_n)} = (p+1)^{-\frac{1}{p}} \text{.}
+\end{align}
+
+TODO: Show that \eqref{eq:power-norm-n-infinity} is the upper bound if $p>1$ and the lower bound if $p<1$.
+
+By the power mean inequality, which can be proved by applying the Jensen inequality, $\mathrm{m}_p(\rvec x)$ is monotonically increasing in $p$ (for $p>0$).
+
+
+For easier analysis, let's first consider a special case: ${\rvec x_n}_\ind{i}\sim\mathcal{U}\del{\intcc{0,1}}$.
+\begin{align*}
+\E \sbr{\mathrm{m}_p(\rvec x_n)}
+&= \E\sbr{\del{\frac{1}{n}\sum_i \envert{{\rvec x_n}_\ind{i}}^p}^\frac{1}{p}}  \\
+% not good (no dependence on n): &\approx \E\sbr{\del{\frac{1}{2p}}^\frac{1}{p}}  \\
+&= \idotsint_{\intcc{0,1}^n} \del{\frac{1}{n}\sum_i \envert{\vec x_\ind{i}}^p}^\frac{1}{p} \dif\vec x  \\
+&= n^{-\frac{1}{p}}\idotsint_{\intcc{0,1}^n} \del{\sum_i \envert{\vec x_\ind{i}}^p}^\frac{1}{p} \dif\vec x  
+\end{align*}
+
+
+\paragraph{Local $p$-norm and hiererchical norm.}
+Let $\vec k$ denote a non-negative $2$-D kernel with $\enVert{\vec k}_1=1$, e.g. Gaussian cenetered at $(0,0)$. Let $\vec x$ denote an image perturbation and assume that it has a single channel for simplicity.
+We can define the local $p$-norm around a pixel $(i, j)$ as
+\begin{align}
+\mathrm{LocalNorm}_{p,\vec k}(\vec x)_\ind{i,j} = \del{\envert{\vec x}^p * \vec k}_\ind{i,j}^\frac{1}{p},
+\end{align}
+where the absolute value and powering operatons are elementwise.
+
+We can then define a bi-level hierarchical $(p_1,p_2)$-norm as $\enVert{\mathrm{LocalNorm}_{p_1,\vec k}(\vec x)}_{p_2}$. This can be generalizad to a multi-level norm $(p_1,..,p_n)$-norm by chaining multiple local norms with potentially different kernels until the last, global, $p_n$-norm.
+
+Why?
+
+%Using e.g a $(1,\infty)$-norm for contraining adversarial perturbations could allow for more flexible perturbations locally, but having local changes not add up to the global norm.
+
+%To make the analysis easier, we can consider $\vec x$ and $\vec x_\lambda$ to be continous functions with delta-peaks at the coordinates of pixels. 
+
+%\begin{align}
+%    \enVert{\vec x_\lambda}_p = \del{ \int_{u\in\intcc{0,\lambda h}\cap\N}\int_{v\in\intcc{0,\lambda w}\cap\N} {\vec x_\lambda}\del{u, v}}^{\frac{1}{p}}
+%\end{align}
+
+
+
+
 
 \bibliography{bibliography}
 \bibliographystyle{plainnat} 
